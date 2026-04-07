@@ -1,26 +1,30 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
 import  TodoItem  from './TodoItem'
-import type { Todo, Status, Filter } from './types'
+import type { Todo, Filter } from './types'
 import './App.css'
 
 
 function App() {
 
-const [todos, setTodos] = useState<Todo[]>([])
-const [text, setText] = useState("")
-const [filter, setFilter] = useState<Filter>("all")
-
-useEffect(() => {
+const [todos, setTodos] = useState<Todo[]>(() => {
   const saved = localStorage.getItem("todos")
-  if (saved) {
-    setTodos(JSON.parse(saved))
-  }
-}, [])
+  return saved ? JSON.parse(saved) : []
+})
+const [text, setText] = useState("")
+const [filter, setFilter] = useState<Filter>(() => {
+  const saved = localStorage.getItem("filter")
+  return (saved as Filter) || "all"
+})
 
 useEffect(() => {
   localStorage.setItem("todos", JSON.stringify(todos))
 }, [todos])
+
+useEffect(() => {
+  localStorage.setItem("filter", filter)
+}, [filter])
+
 
 const addTodo = () => {
   if (text.trim() === "") return
