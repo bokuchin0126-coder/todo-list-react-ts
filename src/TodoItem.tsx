@@ -49,13 +49,16 @@ function TodoItem({ todo, onDelete, onToggle, onToggleEdit, onUpdate }: Props) {
                         onToggleEdit(todo.id)
                     }
                     if (e.key === "Enter") {
+                        if (tempText.trim() === "") return
                         onUpdate(todo.id, tempText)
                         onToggleEdit(todo.id)
                     }
                   }}
                   />
             ) : (
-                <span>{todo.text}</span>
+                <span className={todo.status === "completed" ? "completed" : ""}>
+                    {todo.text}
+                </span>
             )}
 
             <button onClick={() => onToggle(todo.id)}>

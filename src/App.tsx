@@ -12,6 +12,7 @@ const [todos, setTodos] = useState<Todo[]>(() => {
   return saved ? JSON.parse(saved) : []
 })
 const [text, setText] = useState("")
+const [searchText, setSearchText] = useState("")
 const [filter, setFilter] = useState<Filter>(() => {
   const saved = localStorage.getItem("filter")
   return (saved as Filter) || "all"
@@ -44,8 +45,11 @@ const toggleTodo = (id: number) => {
 }
 
 const filteredTodos = todos.filter(todo => {
-  if (filter === "all") return true
-  return todo.status === filter
+  if (filter !== "all" && todo.status !== filter) return false
+
+  if (!todo.text.includes(searchText)) return false
+
+  return true
 })
 
 const toggleEdit = (id: number) => {
@@ -60,37 +64,45 @@ const updateTodo = (id: number, newText: string) => {
   ))
 }
 
+
 return (
   <>
-    <input 
-      value={text}
-      onChange={(e) => setText(e.target.value)} 
-      onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-          addTodo()
-        }
-      }}
-    />
-    <button onClick={addTodo} disabled={text.trim() === ""}>
-      追加
-    </button>
-
-    <div>
-      <button onClick={() => setFilter("all")}>全て</button>
-      <button onClick={() => setFilter("completed")}>完了</button>
-      <button onClick={() => setFilter("active")}>未完了</button>
-    </div>
-
-    {filteredTodos.map((todo) => (
-      <TodoItem 
-        key={todo.id} 
-        todo={todo} 
-        onDelete={deleteTodo} 
-        onToggle={toggleTodo} 
-        onToggleEdit={toggleEdit}
-        onUpdate={updateTodo}
+    <div className="body">
+      <input 
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)} 
       />
-    ))}
+
+      <input 
+        value={text}
+        onChange={(e) => setText(e.target.value)} 
+        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+          if (e.key === "Enter") {
+            addTodo()
+          }
+        }}
+      />
+      <button onClick={addTodo} disabled={text.trim() === ""}>
+        追加
+      </button>
+
+      <div>
+        <button onClick={() => setFilter("all")}>全て</button>
+        <button onClick={() => setFilter("completed")}>完了</button>
+        <button onClick={() => setFilter("active")}>未完了</button>
+      </div>
+
+      {filteredTodos.map((todo) => (
+        <TodoItem 
+          key={todo.id} 
+          todo={todo} 
+          onDelete={deleteTodo} 
+          onToggle={toggleTodo} 
+          onToggleEdit={toggleEdit}
+          onUpdate={updateTodo}
+        />
+      ))}
+    </div>
   </>
 )
 }
