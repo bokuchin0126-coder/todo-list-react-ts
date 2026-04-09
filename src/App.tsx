@@ -71,7 +71,10 @@ return (
       <input 
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)} 
+        placeholder="検索..."
       />
+
+      <p>{filteredTodos.length === 0 ? "該当なし" : filteredTodos.length + "/" + todos.length + "件"}</p>
 
       <input 
         value={text}
@@ -87,15 +90,28 @@ return (
       </button>
 
       <div>
-        <button onClick={() => setFilter("all")}>全て</button>
-        <button onClick={() => setFilter("completed")}>完了</button>
-        <button onClick={() => setFilter("active")}>未完了</button>
+        <button 
+          onClick={() => setFilter("all")}
+          className={filter === "all" ? "active-filter" : ""}>
+            全て
+        </button>
+        <button 
+          onClick={() => setFilter("completed")}
+          className={filter === "completed" ? "active-filter" : ""}>
+            完了
+        </button>
+        <button 
+          onClick={() => setFilter("active")}
+          className={filter === "active" ? "active-filter" : ""}>
+            未完了
+        </button>
       </div>
 
       {filteredTodos.map((todo) => (
         <TodoItem 
           key={todo.id} 
           todo={todo} 
+          searchText={searchText}
           onDelete={deleteTodo} 
           onToggle={toggleTodo} 
           onToggleEdit={toggleEdit}

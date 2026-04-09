@@ -5,6 +5,7 @@ import { useRef } from "react"
 
 type Props = {
     todo: Todo
+    searchText: string
     onDelete: (id: number) => void
     onToggle: (id: number) => void
     onToggleEdit: (id: number) => void
@@ -12,7 +13,7 @@ type Props = {
 }
 
 
-function TodoItem({ todo, onDelete, onToggle, onToggleEdit, onUpdate }: Props) {
+function TodoItem({ todo, searchText, onDelete, onToggle, onToggleEdit, onUpdate }: Props) {
   const [tempText, setTempText] = useState<string>(todo.text)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -37,7 +38,12 @@ function TodoItem({ todo, onDelete, onToggle, onToggleEdit, onUpdate }: Props) {
   }, [])
 
     return (
-        <div>
+        <div className="todo-item">
+            
+            <button onClick={() => onToggle(todo.id)}>
+                {todo.status === "active" ? "□" : "✓"}
+            </button>
+
             {todo.isEditing ? (
                 <input
                 ref={inputRef}
@@ -57,13 +63,14 @@ function TodoItem({ todo, onDelete, onToggle, onToggleEdit, onUpdate }: Props) {
                   />
             ) : (
                 <span className={todo.status === "completed" ? "completed" : ""}>
-                    {todo.text}
+                    {searchText ? todo.text.split(searchText).map((part, i, arr) => (
+                        <span key={i}>
+                            {part}
+                            {i < arr.length - 1 && <mark>{searchText}</mark>}
+                        </span>
+                    )) : todo.text}
                 </span>
             )}
-
-            <button onClick={() => onToggle(todo.id)}>
-                {todo.status === "active" ? "完了" : "未完了"}
-            </button>
 
             <button onClick={() => onToggleEdit(todo.id)}>
                 {todo.isEditing ? "保存" : "編集"}
