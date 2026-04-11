@@ -40,47 +40,49 @@ function TodoItem({ todo, searchText, onDelete, onToggle, onToggleEdit, onUpdate
     return (
         <div className="todo-item">
             
-            <button onClick={() => onToggle(todo.id)}>
-                {todo.status === "active" ? "□" : "✓"}
-            </button>
+            <div className="left">
+              <button onClick={() => onToggle(todo.id)}>
+                  {todo.status === "active" ? "□" : "✓"}
+              </button>
 
-            {todo.isEditing ? (
-                <input
-                ref={inputRef}
-                  value={tempText}
-                  onChange={(e) => setTempText(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Escape") {
-                        setTempText(todo.text)
-                        onToggleEdit(todo.id)
-                    }
-                    if (e.key === "Enter") {
-                        if (tempText.trim() === "") return
-                        onUpdate(todo.id, tempText)
-                        onToggleEdit(todo.id)
-                    }
-                  }}
-                  />
-            ) : (
-                <span className={todo.status === "completed" ? "completed" : ""}>
-                    {searchText ? todo.text.split(searchText).map((part, i, arr) => (
-                        <span key={i}>
-                            {part}
-                            {i < arr.length - 1 && <mark>{searchText}</mark>}
-                        </span>
-                    )) : todo.text}
-                </span>
-            )}
+              {todo.isEditing ? (
+                  <input
+                  ref={inputRef}
+                    value={tempText}
+                    onChange={(e) => setTempText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape") {
+                          setTempText(todo.text)
+                          onToggleEdit(todo.id)
+                      }
+                      if (e.key === "Enter") {
+                          if (tempText.trim() === "") return
+                          onUpdate(todo.id, tempText)
+                          onToggleEdit(todo.id)
+                      }
+                    }}
+                    />
+              ) : (
+                  <span className={todo.status === "completed" ? "completed" : ""}>
+                      {searchText ? todo.text.split(searchText).map((part, i, arr) => (
+                          <span key={i}>
+                              {part}
+                              {i < arr.length - 1 && <mark>{searchText}</mark>}
+                          </span>
+                      )) : todo.text}
+                  </span>
+              )}
+            </div>
 
-            <button onClick={() => onToggleEdit(todo.id)}>
-                {todo.isEditing ? "保存" : "編集"}
-            </button>
+            <div className="right">
+              <button onClick={() => onToggleEdit(todo.id)}>
+                  {todo.isEditing ? "保存" : "編集"}
+              </button>
 
-            
-
-            <button onClick={() => onDelete(todo.id)}>
-                消去
-            </button>
+              <button onClick={() => onDelete(todo.id)}>
+                  消去
+              </button>
+            </div>
         </div>
     )
 }
