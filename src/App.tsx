@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
-import  TodoItem  from './TodoItem'
+import  TodoItem  from './components/TodoItem'
 import type { Todo, Filter } from './types'
 import './App.css'
 
