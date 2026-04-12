@@ -11,7 +11,7 @@ const [todos, setTodos] = useState<Todo[]>(() => {
   const saved = localStorage.getItem("todos")
   return saved ? JSON.parse(saved) : []
 })
-const [text, setText] = useState("")
+const [inputText, setInputText] = useState("")
 const [searchText, setSearchText] = useState("")
 const [filter, setFilter] = useState<Filter>(() => {
   const saved = localStorage.getItem("filter")
@@ -27,38 +27,44 @@ useEffect(() => {
 }, [filter])
 
 
-const addTodo = () => {
-  if (text.trim() === "") return
+const handleAddTodo = () => {
+  if (inputText.trim() === "") return
 
-  setTodos([...todos, { id: Date.now(), text: text, status: "active", isEditing: false }])
-  setText("")
+  setTodos([...todos, { id: Date.now(), text: inputText, status: "active", isEditing: false }])
+  setInputText("")
 }
 
-const deleteTodo = (id: number) => {
+const handleDeleteTodo = (id: number) => {
   setTodos(prev => prev.filter(todo => todo.id !== id))
 }
 
-const toggleTodo = (id: number) => {
+const handleToggleTodo = (id: number) => {
   setTodos(prev => prev.map(todo => 
     todo.id === id ? {...todo, status: todo.status === "active" ? "completed" : "active"} : todo
   ))
 }
 
-const filteredTodos = todos.filter(todo => {
-  if (filter !== "all" && todo.status !== filter) return false
+function filterByStatus(todos: Todo[], filter: Filter) {
+  if (filter === "all") return todos
+  return todos.filter(todo => todo.status === filter)
+}
 
-  if (!todo.text.includes(searchText)) return false
+function filterBySearch(todos: Todo[], searchText: string) {
+  return todos.filter(todo => todo.text.includes(searchText))
+}
 
-  return true
-})
+const filteredTodos = filterBySearch(
+  filterByStatus(todos, filter),
+  searchText
+)
 
-const toggleEdit = (id: number) => {
+const handleToggleEdit = (id: number) => {
   setTodos(prev => prev.map(todo => 
     todo.id === id ? {...todo, isEditing: !todo.isEditing} : todo
   ))
 }
 
-const updateTodo = (id: number, newText: string) => {
+const handleUpdateTodo = (id: number, newText: string) => {
   setTodos(prev => prev.map(todo => 
     todo.id === id ? {...todo, text: newText } : todo
   ))
@@ -77,15 +83,16 @@ return (
       <p>{filteredTodos.length === 0 ? "該当なし" : filteredTodos.length + "/" + todos.length + "件"}</p>
 
       <input 
-        value={text}
-        onChange={(e) => setText(e.target.value)} 
+        value={inputText}
+        onChange={(e) => setInputText(e.target.value)} 
         onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
           if (e.key === "Enter") {
-            addTodo()
+            handleAddTodo()
           }
         }}
+        placeholder="新しいタスクを入力..."
       />
-      <button onClick={addTodo} disabled={text.trim() === ""}>
+      <button onClick={handleAddTodo} disabled={inputText.trim() === ""}>
         追加
       </button>
 
@@ -112,10 +119,10 @@ return (
           key={todo.id} 
           todo={todo} 
           searchText={searchText}
-          onDelete={deleteTodo} 
-          onToggle={toggleTodo} 
-          onToggleEdit={toggleEdit}
-          onUpdate={updateTodo}
+          onDelete={handleDeleteTodo} 
+          onToggle={handleToggleTodo} 
+          onToggleEdit={handleToggleEdit}
+          onUpdate={handleUpdateTodo}
         />
       ))}
     </div>
