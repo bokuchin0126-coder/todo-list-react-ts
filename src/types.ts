@@ -8,3 +8,5 @@ export type Todo = {
 }
 
 export type Filter = "all" | Status
+
+export type View = "list" | "detail"
