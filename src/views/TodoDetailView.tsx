@@ -1,23 +1,26 @@
-import type { View } from '../types'
+import type { View, Category } from '../types'
 
 type Props = {
-    categoryId: number | null
+    selectedCategoryId: number | null
+    setSelectedCategoryId: (number: number) => void
     view: View
     setView: (view: View) => void
 }
 
-function TodoDetailView({ categoryId, view, setView }: Props) {
+function TodoDetailView({ selectedCategoryId, setSelectedCategoryId, view, setView }: Props) {
     return (
         <div className="detail">
-          <h2>カテゴリ詳細</h2>
+          <h2>カテゴリ</h2>
 
-          <p>選択中ID: {categoryId ?? "未選択"}</p>
-        
-          <button onClick={() => setView("list")}>← 戻る</button>
+          <button onClick={() => {
+            setSelectedCategoryId(1)
+            setView("list")
+          }}>勉強</button>
 
-          <div>
-            <p>ここにタスクが入る予定</p>
-          </div>
+          <button onClick={() => {
+            setSelectedCategoryId(2)
+            setView("list")
+          }}>筋トレ</button>
         </div>
     )
 }

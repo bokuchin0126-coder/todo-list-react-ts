@@ -1,10 +1,11 @@
 import  TodoItem  from '../components/TodoItem'
-import type { Todo, Filter } from '../types'
+import type { Todo, Filter, View } from '../types'
 import '../App.css'
 
 
 type Props = {
   todos: Todo[]
+  todoByCategory: Todo[]
   filteredTodos: Todo[]
   searchText: string
   inputText: string
@@ -12,6 +13,7 @@ type Props = {
   setSearchText: (text: string) => void
   setInputText: (text: string) => void
   setFilter: (filter: Filter) => void
+  setView: (view: View) => void
   onAddTodo: () => void
   onDelete: (id: number) => void
   onToggle: (id: number) => void
@@ -19,7 +21,7 @@ type Props = {
   onUpdate: (id: number, text: string) => void
 }
 
-function TodoListView({ todos, filteredTodos, searchText, inputText, filter, setSearchText, setInputText, setFilter, onAddTodo, onDelete, onToggle, onToggleEdit, onUpdate }: Props) {
+function TodoListView({ todos, todoByCategory, filteredTodos, searchText, inputText, filter, setView, setSearchText, setInputText, setFilter, onAddTodo, onDelete, onToggle, onToggleEdit, onUpdate }: Props) {
 
 
   return (
@@ -38,7 +40,7 @@ function TodoListView({ todos, filteredTodos, searchText, inputText, filter, set
           onChange={(e) => setInputText(e.target.value)} 
           onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
             if (e.key === "Enter") {
-              onAddTodo
+              onAddTodo()
             }
           }}
           placeholder="新しいタスクを入力..."
@@ -65,7 +67,7 @@ function TodoListView({ todos, filteredTodos, searchText, inputText, filter, set
           </button>
         </div>
 
-        {filteredTodos.map((todo) => (
+        {todoByCategory.map((todo) => (
           <TodoItem 
             key={todo.id} 
             todo={todo} 
@@ -76,6 +78,9 @@ function TodoListView({ todos, filteredTodos, searchText, inputText, filter, set
             onUpdate={onUpdate}
           />
         ))}
+      </div>
+      <div>
+        <button onClick={() => setView("detail")}>戻る</button>
       </div>
     </>
   )

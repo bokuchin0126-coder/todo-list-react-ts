@@ -2,13 +2,17 @@ import { useState } from 'react'
 import { useEffect } from 'react'
 import  TodoListView  from './views/TodoListView'
 import  TodoDetailView  from './views/TodoDetailView'
-import type { Todo, Filter, View } from './types'
+import type { Todo, Filter, View, Category } from './types'
 import './App.css'
 
 
 function App() {
 
   const [view, setView] = useState<View>("detail")
+  const [categories, setCategories] = useState<Category[]>([
+    { id: 1, name: "勉強"},
+    { id: 2, name: "筋トレ"}
+  ])
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
   const [todos, setTodos] = useState<Todo[]>(() => {
     const saved = localStorage.getItem("todos")
@@ -29,11 +33,11 @@ function App() {
     localStorage.setItem("filter", filter)
   }, [filter])
 
-
   const handleAddTodo = () => {
     if (inputText.trim() === "") return
+    if (!selectedCategoryId) return 
 
-    setTodos([...todos, { id: Date.now(), text: inputText, status: "active", isEditing: false }])
+    setTodos([...todos, { id: Date.now(), text: inputText, status: "active", isEditing: false, categoryId:  selectedCategoryId}])
     setInputText("")
   }
 
@@ -61,6 +65,10 @@ function App() {
     searchText
   )
 
+  const todoByCategory = filteredTodos.filter(
+    (todo) => todo.categoryId === selectedCategoryId
+  )
+
   const handleToggleEdit = (id: number) => {
     setTodos(prev => prev.map(todo => 
       todo.id === id ? {...todo, isEditing: !todo.isEditing} : todo
@@ -76,10 +84,18 @@ function App() {
 
   return (
     <>
-      {view === "list" ? (
-        <div className="CategoryList">
+      {view === "detail" ? (
+        <TodoDetailView
+            view={view}
+            setView={setView}
+            selectedCategoryId={selectedCategoryId} 
+            setSelectedCategoryId={setSelectedCategoryId}
+          />
+        ) : (
+          <div className="CategoryList">
           <TodoListView
             todos={todos} 
+            todoByCategory={todoByCategory}
             filteredTodos={filteredTodos}
             searchText={searchText}
             inputText={inputText}
@@ -87,6 +103,7 @@ function App() {
             setSearchText={setSearchText}
             setInputText={setInputText}
             setFilter={setFilter}
+            setView={setView}
             onAddTodo={handleAddTodo}
             onDelete={handleDeleteTodo} 
             onToggle={handleToggleTodo} 
@@ -94,14 +111,8 @@ function App() {
             onUpdate={handleUpdateTodo}
           />
         </div>
-        ) : (
-          <TodoDetailView
-            view={view}
-            setView={setView}
-            categoryId={selectedCategoryId} 
-
-          />
         )}
+        
     </>
   )
 }
