@@ -6,6 +6,7 @@ import '../App.css'
 type Props = {
   todos: Todo[]
   todoByCategory: Todo[]
+  selectedCategoryId: number | null
   filteredTodos: Todo[]
   searchText: string
   inputText: string
@@ -21,8 +22,11 @@ type Props = {
   onUpdate: (id: number, text: string) => void
 }
 
-function TodoListView({ todos, todoByCategory, filteredTodos, searchText, inputText, filter, setView, setSearchText, setInputText, setFilter, onAddTodo, onDelete, onToggle, onToggleEdit, onUpdate }: Props) {
+function TodoListView({ todos, todoByCategory, selectedCategoryId, filteredTodos, searchText, inputText, filter, setView, setSearchText, setInputText, setFilter, onAddTodo, onDelete, onToggle, onToggleEdit, onUpdate }: Props) {
 
+  const todosInCategory = todos.filter(
+    (todo) => todo.categoryId === selectedCategoryId
+  )
 
   return (
     <>
@@ -33,7 +37,7 @@ function TodoListView({ todos, todoByCategory, filteredTodos, searchText, inputT
           placeholder="検索..."
         />
 
-        <p>{filteredTodos.length === 0 ? "該当なし" : filteredTodos.length + "/" + todos.length + "件"}</p>
+        <p>{todoByCategory.length === 0 ? "該当なし" : todoByCategory.length + "/" + todosInCategory.length + "件"}</p>
 
         <input 
           value={inputText}

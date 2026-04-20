@@ -1,9 +1,7 @@
-export type Status = "active" | "completed"
-
 export type Todo = {
     id: number
     text: string
-    status: Status
+    status: "active" | "completed"
     isEditing: boolean
     categoryId: number | null
 }
@@ -13,6 +11,6 @@ export type Category = {
     name: string
 }
 
-export type Filter = "all" | Status
+export type Filter = "all" | "active" | "completed"
 
 export type View = "list" | "detail"

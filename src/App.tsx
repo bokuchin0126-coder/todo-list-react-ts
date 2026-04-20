@@ -9,10 +9,6 @@ import './App.css'
 function App() {
 
   const [view, setView] = useState<View>("detail")
-  const [categories, setCategories] = useState<Category[]>([
-    { id: 1, name: "勉強"},
-    { id: 2, name: "筋トレ"}
-  ])
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
   const [todos, setTodos] = useState<Todo[]>(() => {
     const saved = localStorage.getItem("todos")
@@ -87,6 +83,7 @@ function App() {
       {view === "detail" ? (
         <TodoDetailView
             view={view}
+            todos={todos}
             setView={setView}
             selectedCategoryId={selectedCategoryId} 
             setSelectedCategoryId={setSelectedCategoryId}
@@ -96,6 +93,7 @@ function App() {
           <TodoListView
             todos={todos} 
             todoByCategory={todoByCategory}
+            selectedCategoryId={selectedCategoryId}
             filteredTodos={filteredTodos}
             searchText={searchText}
             inputText={inputText}
