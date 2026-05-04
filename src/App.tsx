@@ -2,26 +2,55 @@ import { useState } from 'react'
 import { useEffect } from 'react'
 import  TodoListView  from './views/TodoListView'
 import  TodoDetailView  from './views/TodoDetailView'
-import type { Todo, Filter, View, Category } from './types'
+import type { Todo, Filter, View, Category, ApiTodo } from './types'
 import './App.css'
 
 
 function App() {
-
+  
   const [view, setView] = useState<View>("detail")
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
-  const [todos, setTodos] = useState<Todo[]>(() => {
-    const saved = localStorage.getItem("todos")
-    return saved ? JSON.parse(saved) : []
-  })
+  const [todos, setTodos] = useState<Todo[]>([])
   const [inputText, setInputText] = useState<string>("")
   const [searchText, setSearchText] = useState<string>("")
   const [filter, setFilter] = useState<Filter>(() => {
     const saved = localStorage.getItem("filter")
     return (saved as Filter) || "all"
   })
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    const saved = localStorage.getItem("todos")
+    if (saved) {
+      setTodos(JSON.parse(saved))
+      setLoading(false)
+      return
+    }
+
+    const fetchDate = async () => {
+      try {
+        const res = await fetch("https://jsonplaceholder.typicode.com/todos?_limit=5")
+        const date = await res.json()
+
+        const converted = date.map((item: ApiTodo) => ({
+          id: item.id,
+          text: item.title,
+          status: item.completed ? "completed" : "active",
+          categoryId: 1
+        }))
+          setTodos(converted)
+      } catch (e) { 
+        console.log("エラー", e)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDate()
+  }, [])
+
+  useEffect(() => {
+    if (todos.length === 0) return
     localStorage.setItem("todos", JSON.stringify(todos))
   }, [todos])
 
@@ -29,22 +58,81 @@ function App() {
     localStorage.setItem("filter", filter)
   }, [filter])
 
-  const handleAddTodo = () => {
-    if (inputText.trim() === "") return
-    if (!selectedCategoryId) return 
+  const handleAddTodo = async () => {
+    if (!inputText.trim()) return
+    
+    try {
+      const res = await fetch("https://jsonplaceholder.typicode.com/todos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          title: inputText,
+          completed: false
+        })
+      })
+      const date = await res.json()
 
-    setTodos([...todos, { id: Date.now(), text: inputText, status: "active", isEditing: false, categoryId:  selectedCategoryId}])
-    setInputText("")
+      const newTodo: Todo = {
+        id: date.id,
+        text: date.title,
+        status: "active",
+        isEditing: false,
+        categoryId: 1
+      }
+
+      setTodos(prev => [...prev, newTodo])
+      setInputText("")
+    } catch (e) {
+      console.log(e)
+    }
   }
 
-  const handleDeleteTodo = (id: number) => {
-    setTodos(prev => prev.filter(todo => todo.id !== id))
+  const handleDeleteTodo = async (id: number) => {
+    try {
+      await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
+        method: "DELETE"
+      })
+      setTodos(prev => prev.filter(todo => todo.id !== id)) 
+    } catch (e) {
+      console.log(e)
+    }
   }
 
-  const handleToggleTodo = (id: number) => {
-    setTodos(prev => prev.map(todo => 
-      todo.id === id ? {...todo, status: todo.status === "active" ? "completed" : "active"} : todo
-    ))
+  const handleToggleTodo = async (id: number) => {
+    try {
+      const target = todos.find(t => t.id ===id)
+      if (!target) return 
+
+      const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          completed: target.status !== "completed" 
+        })
+      })
+
+      if (!res.ok) throw new Error("更新失敗")
+
+      const date = await res.json()
+
+      const updatedTodo: Todo = {
+        id: date.id,
+        text: date.title,
+        status: date.completed ? "completed" : "active",
+        isEditing: false,
+        categoryId: 1
+      }
+
+      setTodos(prev => prev.map(t => (
+        t.id === id ? updatedTodo : t
+      )))
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   function filterByStatus(todos: Todo[], filter: Filter) {

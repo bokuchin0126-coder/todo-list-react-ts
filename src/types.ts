@@ -11,6 +11,12 @@ export type Category = {
     name: string
 }
 
+export type ApiTodo = {
+    id: number
+    title: string
+    completed: boolean
+}
+
 export type Filter = "all" | "active" | "completed"
 
 export type View = "list" | "detail"
