@@ -15,40 +15,42 @@ type Props = {
 
 function TodoItem({ todo, searchText, onDelete, onToggle, onToggleEdit, onUpdate }: Props) {
   const [tempText, setTempText] = useState<string>(todo.text)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const divRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
   if (todo.isEditing) {
-    inputRef.current?.focus()
+    divRef.current?.focus()
   }
   }, [todo.isEditing])
 
   useEffect(() => {
+    if (!todo.isEditing) return
+
     const handleClickOutside = (e: MouseEvent) => {
-        if (inputRef.current && !inputRef.current.contains(e.target as Node)) {
+        if (divRef.current && !divRef.current.contains(e.target as Node)) {
           setTempText(todo.text)
           onToggleEdit(todo.id)
         }
     }
-    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("click", handleClickOutside)
 
     return () => {
-        document.removeEventListener("mousedown", handleClickOutside)
+        document.removeEventListener("click", handleClickOutside)
     }
-  }, [])
+  }, [todo.isEditing])
 
     return (
-        <div className="todo-item">
+        <div className="todo-item" ref={divRef}>
             
             <div className="left">
               <button onClick={() => onToggle(todo.id)}>
                   {todo.status === "active" ? "□" : "✓"}
               </button>
-
+              
               {todo.isEditing ? (
                   <input
-                  ref={inputRef}
                     value={tempText}
+                    autoFocus
                     onChange={(e) => setTempText(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === "Escape") {
@@ -75,7 +77,11 @@ function TodoItem({ todo, searchText, onDelete, onToggle, onToggleEdit, onUpdate
             </div>
 
             <div className="right">
-              <button onClick={() => onToggleEdit(todo.id)}>
+              <button onClick={() => {
+                if (todo.isEditing) {
+                onUpdate(todo.id, tempText)
+              }
+              onToggleEdit(todo.id)}}>
                   {todo.isEditing ? "保存" : "編集"}
               </button>
 

@@ -11,6 +11,8 @@ type Props = {
   searchText: string
   inputText: string
   filter: Filter
+  error: string | null
+  loading: boolean
   setSearchText: (text: string) => void
   setInputText: (text: string) => void
   setFilter: (filter: Filter) => void
@@ -22,7 +24,7 @@ type Props = {
   onUpdate: (id: number, text: string) => void
 }
 
-function TodoListView({ todos, todoByCategory, selectedCategoryId, filteredTodos, searchText, inputText, filter, setView, setSearchText, setInputText, setFilter, onAddTodo, onDelete, onToggle, onToggleEdit, onUpdate }: Props) {
+function TodoListView({ todos, todoByCategory, selectedCategoryId, filteredTodos, searchText, inputText, filter, error, loading, setView, setSearchText, setInputText, setFilter, onAddTodo, onDelete, onToggle, onToggleEdit, onUpdate }: Props) {
 
   const todosInCategory = todos.filter(
     (todo) => todo.categoryId === selectedCategoryId
@@ -70,6 +72,8 @@ function TodoListView({ todos, todoByCategory, selectedCategoryId, filteredTodos
               未完了
           </button>
         </div>
+        {loading && <p>ローディング中...</p>}
+        {error && <p>{error}</p>}
 
         {todoByCategory.map((todo) => (
           <TodoItem 

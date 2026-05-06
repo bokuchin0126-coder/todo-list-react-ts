@@ -17,7 +17,8 @@ function App() {
     const saved = localStorage.getItem("filter")
     return (saved as Filter) || "all"
   })
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const saved = localStorage.getItem("todos")
@@ -27,6 +28,7 @@ function App() {
       return
     }
 
+    setLoading(true)
     const fetchDate = async () => {
       try {
         const res = await fetch("https://jsonplaceholder.typicode.com/todos?_limit=5")
@@ -40,9 +42,10 @@ function App() {
         }))
           setTodos(converted)
       } catch (e) { 
-        console.log("エラー", e)
+        setError("データの取得に失敗しました")
       } finally {
         setLoading(false)
+        setError(null)
       }
     }
 
@@ -61,6 +64,7 @@ function App() {
   const handleAddTodo = async () => {
     if (!inputText.trim()) return
     
+    setLoading(true)
     try {
       const res = await fetch("https://jsonplaceholder.typicode.com/todos", {
         method: "POST",
@@ -75,7 +79,7 @@ function App() {
       const date = await res.json()
 
       const newTodo: Todo = {
-        id: date.id,
+        id: Date.now(),
         text: date.title,
         status: "active",
         isEditing: false,
@@ -85,22 +89,30 @@ function App() {
       setTodos(prev => [...prev, newTodo])
       setInputText("")
     } catch (e) {
-      console.log(e)
+      setError("データの追加に失敗しました")
+    } finally {
+      setLoading(false)
+      setError(null)
     }
   }
 
   const handleDeleteTodo = async (id: number) => {
+    setLoading(true)
     try {
       await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
         method: "DELETE"
       })
       setTodos(prev => prev.filter(todo => todo.id !== id)) 
     } catch (e) {
-      console.log(e)
+      setError("データの消去に失敗しました")
+    } finally {
+      setLoading(false)
+      setError(null)
     }
   }
 
   const handleToggleTodo = async (id: number) => {
+    setLoading(true)
     try {
       const target = todos.find(t => t.id ===id)
       if (!target) return 
@@ -114,24 +126,17 @@ function App() {
           completed: target.status !== "completed" 
         })
       })
-
-      if (!res.ok) throw new Error("更新失敗")
-
       const date = await res.json()
 
-      const updatedTodo: Todo = {
-        id: date.id,
-        text: date.title,
-        status: date.completed ? "completed" : "active",
-        isEditing: false,
-        categoryId: 1
-      }
-
       setTodos(prev => prev.map(t => (
-        t.id === id ? updatedTodo : t
+        t.id === id ? {...t, status: t.status === "completed" ? "active" : "completed"} : t
       )))
+
     } catch (e) {
-      console.log(e)
+      setError("データの更新に失敗しました")
+    } finally {
+      setLoading(false)
+      setError(null)
     }
   }
 
@@ -186,6 +191,8 @@ function App() {
             searchText={searchText}
             inputText={inputText}
             filter={filter}
+            error={error}
+            loading={loading}
             setSearchText={setSearchText}
             setInputText={setInputText}
             setFilter={setFilter}
