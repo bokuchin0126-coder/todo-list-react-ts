@@ -2,21 +2,20 @@ import type { View, Category, Todo } from '../types'
 import {useState} from 'react'
 
 type Props = {
+  categories: Category[]
   todos: Todo[]
-  selectedCategoryId: number | null
+  categoryName: string
+  selectedCategoryId: number
   setSelectedCategoryId: (number: number) => void
   view: View
   setView: (view: View) => void
+  setCategoryName: (name: string) => void
+  onAddCategory: () => void
 }
 
-function TodoDetailView({ todos, selectedCategoryId, setSelectedCategoryId, view, setView }: Props) {
+function TodoDetailView({ categories, todos, selectedCategoryId, categoryName, setSelectedCategoryId, view, setView, setCategoryName, onAddCategory }: Props) {
 
-  const [categories, setCategories] = useState<Category[]>([
-      { id: 1, name: "勉強"},
-      { id: 2, name: "筋トレ"}
-    ])
-
-  function getProgressByCategory(todos: Todo[], categoryId: number) {
+  function getProgressByCategory(categoryId: number) {
 
     const todosInCategory =  todos.filter(
       (todo) => todo.categoryId === categoryId
@@ -36,14 +35,24 @@ function TodoDetailView({ todos, selectedCategoryId, setSelectedCategoryId, view
           <h2>カテゴリ</h2>
 
           <div>
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => {
-                  setSelectedCategoryId(cat.id)
-                  setView("list")
-                }}
-              >{cat.name} ({getProgressByCategory(todos, cat.id)})</button>
+            <input
+              value={categoryName}
+              autoFocus
+              placeholder={"カテゴリーを追加..."}
+              onChange={(e) => setCategoryName(e.target.value)}
+              onKeyDown={(e) => {
+                if(e.key === "Enter") {
+                  onAddCategory()
+                }
+              }}
+            />
+            <button onClick={() => onAddCategory}>追加</button>
+          </div>
+          <div>
+            {categories.map((category: Category) => (
+              <button key={category.id} onClick={() => {setSelectedCategoryId(category.id), setView("list")}}>
+                {category.name}{getProgressByCategory(category.id)}
+              </button>
             ))}
           </div>
         </div>

@@ -9,8 +9,11 @@ import './App.css'
 function App() {
   
   const [view, setView] = useState<View>("detail")
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
-  const [todos, setTodos] = useState<Todo[]>([])
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0)
+  const [todos, setTodos] = useState<Todo[]>(() => {
+    const saved = localStorage.getItem("todos")
+    return saved ? JSON.parse(saved) : []
+  })
   const [inputText, setInputText] = useState<string>("")
   const [searchText, setSearchText] = useState<string>("")
   const [filter, setFilter] = useState<Filter>(() => {
@@ -19,6 +22,11 @@ function App() {
   })
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
+  const [categories, setCategories] = useState<Category[]>(() => {
+    const saved = localStorage.getItem("categories")
+    return saved ? JSON.parse(saved) : []
+  })
+  const [categoryName, setCategoryName] = useState<string>("")
 
   useEffect(() => {
     const saved = localStorage.getItem("todos")
@@ -38,7 +46,7 @@ function App() {
           id: item.id,
           text: item.title,
           status: item.completed ? "completed" : "active",
-          categoryId: 1
+          categoryId: selectedCategoryId
         }))
           setTodos(converted)
       } catch (e) { 
@@ -56,6 +64,11 @@ function App() {
     if (todos.length === 0) return
     localStorage.setItem("todos", JSON.stringify(todos))
   }, [todos])
+
+  useEffect(() => {
+    if (categories.length === 0) return
+    localStorage.setItem("categories", JSON.stringify(categories))
+  }, [categories])
 
   useEffect(() => {
     localStorage.setItem("filter", filter)
@@ -83,7 +96,7 @@ function App() {
         text: date.title,
         status: "active",
         isEditing: false,
-        categoryId: 1
+        categoryId: selectedCategoryId
       }
 
       setTodos(prev => [...prev, newTodo])
@@ -140,6 +153,13 @@ function App() {
     }
   }
 
+  const handleAddCategory = () => {
+    if (categoryName.trim() === "") return 
+
+    setCategories(prev => [...prev, {id: Date.now(), name: categoryName}])
+    setCategoryName("")
+  }
+
   function filterByStatus(todos: Todo[], filter: Filter) {
     if (filter === "all") return todos
     return todos.filter(todo => todo.status === filter)
@@ -176,10 +196,14 @@ function App() {
       {view === "detail" ? (
         <TodoDetailView
             view={view}
+            categories={categories}
             todos={todos}
+            categoryName={categoryName}
             setView={setView}
             selectedCategoryId={selectedCategoryId} 
             setSelectedCategoryId={setSelectedCategoryId}
+            setCategoryName={setCategoryName}
+            onAddCategory={handleAddCategory}
           />
         ) : (
           <div className="CategoryList">
