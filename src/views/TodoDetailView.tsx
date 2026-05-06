@@ -1,4 +1,4 @@
-import type { View, Category, Todo } from '../types'
+import type { View, Category, Todo } from '../components/types'
 import {useState} from 'react'
 
 type Props = {
@@ -11,9 +11,11 @@ type Props = {
   setView: (view: View) => void
   setCategoryName: (name: string) => void
   onAddCategory: () => void
+  onDeleteCategory: (id: number) => void
 }
 
-function TodoDetailView({ categories, todos, selectedCategoryId, categoryName, setSelectedCategoryId, view, setView, setCategoryName, onAddCategory }: Props) {
+function TodoDetailView({ categories, todos, selectedCategoryId, categoryName, setSelectedCategoryId, view, setView, setCategoryName,
+   onAddCategory, onDeleteCategory }: Props) {
 
   function getProgressByCategory(categoryId: number) {
 
@@ -50,9 +52,14 @@ function TodoDetailView({ categories, todos, selectedCategoryId, categoryName, s
           </div>
           <div>
             {categories.map((category: Category) => (
-              <button key={category.id} onClick={() => {setSelectedCategoryId(category.id), setView("list")}}>
-                {category.name}{getProgressByCategory(category.id)}
-              </button>
+              <div key={category.id}>
+                <button onClick={() => {setSelectedCategoryId(category.id), setView("list")}}>
+                  {category.name}{getProgressByCategory(category.id)}
+                </button>
+                <button onClick={() => onDeleteCategory(category.id)}>
+                  消去
+                </button>
+              </div>
             ))}
           </div>
         </div>

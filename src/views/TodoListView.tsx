@@ -1,5 +1,5 @@
 import  TodoItem  from '../components/TodoItem'
-import type { Todo, Filter, View } from '../types'
+import type { Todo, Filter, View } from '../components/types'
 import '../App.css'
 
 

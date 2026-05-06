@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useEffect } from 'react'
 import  TodoListView  from './views/TodoListView'
 import  TodoDetailView  from './views/TodoDetailView'
-import type { Todo, Filter, View, Category, ApiTodo } from './types'
+import type { Todo, Filter, View, Category, ApiTodo } from './components/types'
 import './App.css'
 
 
@@ -155,9 +155,31 @@ function App() {
 
   const handleAddCategory = () => {
     if (categoryName.trim() === "") return 
+ 
+    setLoading(true)
+    try {
+      setCategories(prev => [...prev, {id: Date.now(), name: categoryName}])
+      setCategoryName("")
+    } catch {
+      setError("カテゴリーの追加に失敗しました")
+    } finally {
+      setError(null)
+      setLoading(false)
+    }
+  }
 
-    setCategories(prev => [...prev, {id: Date.now(), name: categoryName}])
-    setCategoryName("")
+  const handleDeleteCategory = (id: number) => {
+    setLoading(true)
+
+    try {
+      setCategories(prev => prev.filter(category => category.id !== id))
+      setTodos(prev => prev.filter(todo => todo.categoryId !== id))
+    } catch {
+      setError("カテゴリーの消去に失敗しました")
+    } finally {
+      setError(null)
+      setLoading(false)
+    }
   }
 
   function filterByStatus(todos: Todo[], filter: Filter) {
@@ -204,6 +226,7 @@ function App() {
             setSelectedCategoryId={setSelectedCategoryId}
             setCategoryName={setCategoryName}
             onAddCategory={handleAddCategory}
+            onDeleteCategory={handleDeleteCategory}
           />
         ) : (
           <div className="CategoryList">
