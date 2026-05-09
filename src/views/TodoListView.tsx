@@ -7,7 +7,6 @@ type Props = {
   todos: Todo[]
   todoByCategory: Todo[]
   selectedCategoryId: number | null
-  filteredTodos: Todo[]
   searchText: string
   inputText: string
   filter: Filter
@@ -24,7 +23,8 @@ type Props = {
   onUpdate: (id: number, text: string) => void
 }
 
-function TodoListView({ todos, todoByCategory, selectedCategoryId, filteredTodos, searchText, inputText, filter, error, loading, setView, setSearchText, setInputText, setFilter, onAddTodo, onDelete, onToggle, onToggleEdit, onUpdate }: Props) {
+function TodoListView({ todos, todoByCategory, selectedCategoryId, searchText, inputText, filter, error, loading, setView, setSearchText, 
+  setInputText, setFilter, onAddTodo, onDelete, onToggle, onToggleEdit, onUpdate }: Props) {
 
   const todosInCategory = todos.filter(
     (todo) => todo.categoryId === selectedCategoryId

@@ -2,195 +2,60 @@ import { useState } from 'react'
 import { useEffect } from 'react'
 import  TodoListView  from './views/TodoListView'
 import  TodoDetailView  from './views/TodoDetailView'
-import type { Todo, Filter, View, Category, ApiTodo } from './components/types'
+import useTodo from './hooks/useTodos'
+import useCategory from './hooks/useCategories'
+import useInitializeApp from './hooks/useInitializeApp'
+import type { Todo, Filter, View } from './components/types'
 import './App.css'
 
 
 function App() {
   
   const [view, setView] = useState<View>("detail")
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0)
-  const [todos, setTodos] = useState<Todo[]>(() => {
-    const saved = localStorage.getItem("todos")
-    return saved ? JSON.parse(saved) : []
-  })
-  const [inputText, setInputText] = useState<string>("")
-  const [searchText, setSearchText] = useState<string>("")
   const [filter, setFilter] = useState<Filter>(() => {
     const saved = localStorage.getItem("filter")
     return (saved as Filter) || "all"
   })
-  const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
-  const [categories, setCategories] = useState<Category[]>(() => {
-    const saved = localStorage.getItem("categories")
-    return saved ? JSON.parse(saved) : []
-  })
-  const [categoryName, setCategoryName] = useState<string>("")
+  const [loading, setLoading] = useState<boolean>(false)
 
-  useEffect(() => {
-    const saved = localStorage.getItem("todos")
-    if (saved) {
-      setTodos(JSON.parse(saved))
-      setLoading(false)
-      return
-    }
+  const todoState = useTodo(filter, setError, setLoading)
+  const {
+    todos,
+    setTodos,
+    inputText,
+    searchText,
+    selectedCategoryId,
+    setInputText,
+    setSearchText,
+    setSelectedCategoryId,
+    handleAddTodo,
+    handleToggleTodo,
+    handleDeleteTodo,
+    handleToggleEdit,
+    handleUpdateTodo
+  } = todoState
 
-    setLoading(true)
-    const fetchDate = async () => {
-      try {
-        const res = await fetch("https://jsonplaceholder.typicode.com/todos?_limit=5")
-        const date = await res.json()
+  const categoryState = useCategory(setTodos, setError, setLoading)
+  const {
+    categories,
+    categoryName,
+    setCategoryName,
+    handleAddCategory,
+    handleDeleteCategory
+  } = categoryState
 
-        const converted = date.map((item: ApiTodo) => ({
-          id: item.id,
-          text: item.title,
-          status: item.completed ? "completed" : "active",
-          categoryId: selectedCategoryId
-        }))
-          setTodos(converted)
-      } catch (e) { 
-        setError("データの取得に失敗しました")
-      } finally {
-        setLoading(false)
-        setError(null)
-      }
-    }
-
-    fetchDate()
-  }, [])
-
-  useEffect(() => {
-    if (todos.length === 0) return
-    localStorage.setItem("todos", JSON.stringify(todos))
-  }, [todos])
-
-  useEffect(() => {
-    if (categories.length === 0) return
-    localStorage.setItem("categories", JSON.stringify(categories))
-  }, [categories])
-
-  useEffect(() => {
-    localStorage.setItem("filter", filter)
-  }, [filter])
-
-  const handleAddTodo = async () => {
-    if (!inputText.trim()) return
-    
-    setLoading(true)
-    try {
-      const res = await fetch("https://jsonplaceholder.typicode.com/todos", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          title: inputText,
-          completed: false
-        })
-      })
-      const date = await res.json()
-
-      const newTodo: Todo = {
-        id: Date.now(),
-        text: date.title,
-        status: "active",
-        isEditing: false,
-        categoryId: selectedCategoryId
-      }
-
-      setTodos(prev => [...prev, newTodo])
-      setInputText("")
-    } catch (e) {
-      setError("データの追加に失敗しました")
-    } finally {
-      setLoading(false)
-      setError(null)
-    }
-  }
-
-  const handleDeleteTodo = async (id: number) => {
-    setLoading(true)
-    try {
-      await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
-        method: "DELETE"
-      })
-      setTodos(prev => prev.filter(todo => todo.id !== id)) 
-    } catch (e) {
-      setError("データの消去に失敗しました")
-    } finally {
-      setLoading(false)
-      setError(null)
-    }
-  }
-
-  const handleToggleTodo = async (id: number) => {
-    setLoading(true)
-    try {
-      const target = todos.find(t => t.id ===id)
-      if (!target) return 
-
-      const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          completed: target.status !== "completed" 
-        })
-      })
-      const date = await res.json()
-
-      setTodos(prev => prev.map(t => (
-        t.id === id ? {...t, status: t.status === "completed" ? "active" : "completed"} : t
-      )))
-
-    } catch (e) {
-      setError("データの更新に失敗しました")
-    } finally {
-      setLoading(false)
-      setError(null)
-    }
-  }
-
-  const handleAddCategory = () => {
-    if (categoryName.trim() === "") return 
- 
-    setLoading(true)
-    try {
-      setCategories(prev => [...prev, {id: Date.now(), name: categoryName}])
-      setCategoryName("")
-    } catch {
-      setError("カテゴリーの追加に失敗しました")
-    } finally {
-      setError(null)
-      setLoading(false)
-    }
-  }
-
-  const handleDeleteCategory = (id: number) => {
-    setLoading(true)
-
-    try {
-      setCategories(prev => prev.filter(category => category.id !== id))
-      setTodos(prev => prev.filter(todo => todo.categoryId !== id))
-    } catch {
-      setError("カテゴリーの消去に失敗しました")
-    } finally {
-      setError(null)
-      setLoading(false)
-    }
-  }
+  const localStrage = useInitializeApp(todos, categories, filter, selectedCategoryId, setTodos, setError, setLoading)
 
   function filterByStatus(todos: Todo[], filter: Filter) {
-    if (filter === "all") return todos
-    return todos.filter(todo => todo.status === filter)
-  }
-
+      if (filter === "all") return todos
+      return todos.filter(todo => todo.status === filter)
+    }
+  
   function filterBySearch(todos: Todo[], searchText: string) {
     return todos.filter(todo => todo.text.includes(searchText))
   }
-
+  
   const filteredTodos = filterBySearch(
     filterByStatus(todos, filter),
     searchText
@@ -200,29 +65,15 @@ function App() {
     (todo) => todo.categoryId === selectedCategoryId
   )
 
-  const handleToggleEdit = (id: number) => {
-    setTodos(prev => prev.map(todo => 
-      todo.id === id ? {...todo, isEditing: !todo.isEditing} : todo
-    ))
-  }
-
-  const handleUpdateTodo = (id: number, newText: string) => {
-    setTodos(prev => prev.map(todo => 
-      todo.id === id ? {...todo, text: newText } : todo
-    ))
-  }
-
 
   return (
     <>
       {view === "detail" ? (
         <TodoDetailView
-            view={view}
             categories={categories}
             todos={todos}
             categoryName={categoryName}
             setView={setView}
-            selectedCategoryId={selectedCategoryId} 
             setSelectedCategoryId={setSelectedCategoryId}
             setCategoryName={setCategoryName}
             onAddCategory={handleAddCategory}
@@ -234,7 +85,6 @@ function App() {
             todos={todos} 
             todoByCategory={todoByCategory}
             selectedCategoryId={selectedCategoryId}
-            filteredTodos={filteredTodos}
             searchText={searchText}
             inputText={inputText}
             filter={filter}

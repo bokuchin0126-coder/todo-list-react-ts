@@ -5,16 +5,14 @@ type Props = {
   categories: Category[]
   todos: Todo[]
   categoryName: string
-  selectedCategoryId: number
   setSelectedCategoryId: (number: number) => void
-  view: View
   setView: (view: View) => void
   setCategoryName: (name: string) => void
   onAddCategory: () => void
   onDeleteCategory: (id: number) => void
 }
 
-function TodoDetailView({ categories, todos, selectedCategoryId, categoryName, setSelectedCategoryId, view, setView, setCategoryName,
+function TodoDetailView({ categories, todos, categoryName, setSelectedCategoryId, setView, setCategoryName,
    onAddCategory, onDeleteCategory }: Props) {
 
   function getProgressByCategory(categoryId: number) {

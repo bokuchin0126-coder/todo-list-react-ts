@@ -1,21 +1,15 @@
 import { useState } from "react"
-import type { Todo, View, Filter } from "../components/types"
+import type { Dispatch, SetStateAction } from 'react'
+import type { Todo, Filter } from "../components/types"
 
-function useTodo() {
-    const [view, setView] = useState<View>("detail")
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0)
+function useTodo(filter: Filter, setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>> ) {
     const [todos, setTodos] = useState<Todo[]>(() => {
     const saved = localStorage.getItem("todos")
       return saved ? JSON.parse(saved) : []
     })
     const [inputText, setInputText] = useState<string>("")
-    const [loading, setLoading] = useState<boolean>(false)
-    const [error, setError] = useState<string | null>(null)
     const [searchText, setSearchText] = useState<string>("")
-    const [filter, setFilter] = useState<Filter>(() => {
-      const saved = localStorage.getItem("filter")
-      return (saved as Filter) || "all"
-    })
+    const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0)
 
 
     const handleAddTodo = async () => {
@@ -96,24 +90,6 @@ function useTodo() {
       setError(null)
     }
   }
-
-  function filterByStatus(todos: Todo[], filter: Filter) {
-      if (filter === "all") return todos
-      return todos.filter(todo => todo.status === filter)
-    }
-  
-    function filterBySearch(todos: Todo[], searchText: string) {
-      return todos.filter(todo => todo.text.includes(searchText))
-    }
-  
-    const filteredTodos = filterBySearch(
-      filterByStatus(todos, filter),
-      searchText
-    )
-  
-    const todoByCategory = filteredTodos.filter(
-      (todo) => todo.categoryId === selectedCategoryId
-    )
   
     const handleToggleEdit = (id: number) => {
       setTodos(prev => prev.map(todo => 
@@ -129,6 +105,19 @@ function useTodo() {
   
     return {
         todos,
-
+        setTodos,
+        inputText,
+        searchText,
+        selectedCategoryId,
+        setInputText,
+        setSearchText,
+        setSelectedCategoryId,
+        handleAddTodo,
+        handleToggleTodo,
+        handleDeleteTodo,
+        handleToggleEdit,
+        handleUpdateTodo
     }
 }
+
+export default useTodo
