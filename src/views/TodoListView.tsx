@@ -51,6 +51,7 @@ function TodoListView({ todos, todoByCategory, selectedCategoryId, searchText, i
           }}
           placeholder="新しいタスクを入力..."
         />
+        
         <button onClick={onAddTodo} disabled={inputText.trim() === ""}>
           追加
         </button>

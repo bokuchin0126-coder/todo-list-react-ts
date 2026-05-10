@@ -1,12 +1,13 @@
 import { useState } from "react"
 import type { Dispatch, SetStateAction } from 'react'
-import type { Todo, Filter } from "../components/types"
+import type { DailyTodo, Todo, Filter } from "../components/types"
 
 function useTodo(filter: Filter, setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>> ) {
     const [todos, setTodos] = useState<Todo[]>(() => {
-    const saved = localStorage.getItem("todos")
-      return saved ? JSON.parse(saved) : []
+      const saved = localStorage.getItem("todos")
+        return saved ? JSON.parse(saved) : []
     })
+    const [dailyTodos, setDailyTodos] = useState<DailyTodo[]>([])
     const [inputText, setInputText] = useState<string>("")
     const [searchText, setSearchText] = useState<string>("")
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0)

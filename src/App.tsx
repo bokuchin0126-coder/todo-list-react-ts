@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useEffect } from 'react'
 import  TodoListView  from './views/TodoListView'
 import  TodoDetailView  from './views/TodoDetailView'
 import useTodo from './hooks/useTodos'

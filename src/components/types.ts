@@ -1,3 +1,8 @@
+export type  DailyTodo = {
+    date: string
+    todos: Todo[]
+}
+
 export type Todo = {
     id: number
     text: string
