@@ -3,14 +3,16 @@ import type { Dispatch, SetStateAction } from 'react'
 import type { DailyTodo, Todo, Filter } from "../components/types"
 
 function useTodo(filter: Filter, setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>> ) {
-    const [todos, setTodos] = useState<Todo[]>(() => {
+    const [dailyTodos, setDailyTodos] = useState<DailyTodo[]>(() => {
       const saved = localStorage.getItem("todos")
-        return saved ? JSON.parse(saved) : []
+      return saved ? JSON.parse(saved) : []
     })
-    const [dailyTodos, setDailyTodos] = useState<DailyTodo[]>([])
     const [inputText, setInputText] = useState<string>("")
     const [searchText, setSearchText] = useState<string>("")
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0)
+    const today = new Date().toISOString().split("T")[0]
+    const todayDate = dailyTodos.find(day => day.date === today)
+    const todayTodos = todayDate?.todos ?? []
 
 
     const handleAddTodo = async () => {
@@ -38,7 +40,15 @@ function useTodo(filter: Filter, setError: Dispatch<SetStateAction<string | null
         categoryId: selectedCategoryId
       }
 
-      setTodos(prev => [...prev, newTodo])
+      setDailyTodos(prev => prev.map(day => {
+        if (day.date !== today) {
+          return day
+        }
+        return {
+          ...day,
+          todos: [...day.todos, newTodo]
+        }
+      }))
       setInputText("")
     } catch (e) {
       setError("データの追加に失敗しました")
@@ -54,7 +64,15 @@ function useTodo(filter: Filter, setError: Dispatch<SetStateAction<string | null
       await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
         method: "DELETE"
       })
-      setTodos(prev => prev.filter(todo => todo.id !== id)) 
+      setDailyTodos(prev => prev.map(day => {
+        if (day.date !== today) {
+          return day
+        }
+        return {
+          ...day,
+          todos: day.todos.filter(todo => todo.id !== id)
+        }
+      })) 
     } catch (e) {
       setError("データの消去に失敗しました")
     } finally {
@@ -66,7 +84,7 @@ function useTodo(filter: Filter, setError: Dispatch<SetStateAction<string | null
   const handleToggleTodo = async (id: number) => {
     setLoading(true)
     try {
-      const target = todos.find(t => t.id ===id)
+      const target = todayTodos.find(day => day.id === id)
       if (!target) return 
 
       const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
@@ -78,11 +96,18 @@ function useTodo(filter: Filter, setError: Dispatch<SetStateAction<string | null
           completed: target.status !== "completed" 
         })
       })
-      const date = await res.json()
 
-      setTodos(prev => prev.map(t => (
-        t.id === id ? {...t, status: t.status === "completed" ? "active" : "completed"} : t
-      )))
+      setDailyTodos(prev => prev.map(day => {
+        if (day.date !== today) {
+          return day
+        }
+        return {
+          ...day,
+          todos: day.todos.map(todo => (
+            todo.id === id ? {...todo, status: todo.status === "completed" ? "active" : "completed"} : todo
+          ))
+        }
+      }))
 
     } catch (e) {
       setError("データの更新に失敗しました")
@@ -93,20 +118,37 @@ function useTodo(filter: Filter, setError: Dispatch<SetStateAction<string | null
   }
   
     const handleToggleEdit = (id: number) => {
-      setTodos(prev => prev.map(todo => 
-        todo.id === id ? {...todo, isEditing: !todo.isEditing} : todo
-      ))
+      setDailyTodos(prev => prev.map(day => {
+        if (day.date !== today) {
+          return day
+        }
+        return {
+          ...day,
+          todos: day.todos.map(todo => (
+            todo.id === id ? {...todo, isEditing: !todo.isEditing} : todo
+          ))
+        }
+      }))
     }
   
     const handleUpdateTodo = (id: number, newText: string) => {
-      setTodos(prev => prev.map(todo => 
-        todo.id === id ? {...todo, text: newText } : todo
-      ))
+      setDailyTodos(prev => prev.map(day => {
+        if (day.date !== today) {
+          return day
+        }
+        return {
+          ...day,
+          todos: day.todos.map(todo => (
+            todo.id === id ? {...todo, text: newText} : todo
+          ))
+        }
+      }))
     }
   
     return {
-        todos,
-        setTodos,
+        dailyTodos,
+        today,
+        setDailyTodos,
         inputText,
         searchText,
         selectedCategoryId,

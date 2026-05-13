@@ -1,8 +1,8 @@
 import { useState } from "react"
 import type { Dispatch, SetStateAction } from 'react'
-import type { Category, Todo } from "../components/types"
+import type { Category, DailyTodo } from "../components/types"
 
-function useCategory(setTodos: Dispatch<SetStateAction<Todo[]>>, setError: Dispatch<SetStateAction<string | null>>, 
+function useCategory(setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, setError: Dispatch<SetStateAction<string | null>>, 
     setLoading: Dispatch<SetStateAction<boolean>>) {
 
     const [categories, setCategories] = useState<Category[]>(() => {
@@ -10,6 +10,7 @@ function useCategory(setTodos: Dispatch<SetStateAction<Todo[]>>, setError: Dispa
       return saved ? JSON.parse(saved) : []
     })
     const [categoryName, setCategoryName] = useState<string>("")
+    const today = new Date().toISOString().split("T")[0]
 
      const handleAddCategory = () => {
     if (categoryName.trim() === "") return 
@@ -31,7 +32,17 @@ function useCategory(setTodos: Dispatch<SetStateAction<Todo[]>>, setError: Dispa
 
     try {
       setCategories(prev => prev.filter(category => category.id !== id))
-      setTodos(prev => prev.filter(todo => todo.categoryId !== id))
+
+      setDailyTodos(prev => prev.map(day => {
+        if (day.date !== today) {
+          return day
+        }
+        return {
+          ...day,
+          todos: day.todos.filter(todo => todo.id !== id)
+        }
+      }))
+      
     } catch {
       setError("カテゴリーの消去に失敗しました")
     } finally {

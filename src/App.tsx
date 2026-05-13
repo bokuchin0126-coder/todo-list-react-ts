@@ -4,7 +4,7 @@ import  TodoDetailView  from './views/TodoDetailView'
 import useTodo from './hooks/useTodos'
 import useCategory from './hooks/useCategories'
 import useInitializeApp from './hooks/useInitializeApp'
-import type { Todo, Filter, View } from './components/types'
+import type { DailyTodo, Filter, View } from './components/types'
 import './App.css'
 
 
@@ -20,8 +20,9 @@ function App() {
 
   const todoState = useTodo(filter, setError, setLoading)
   const {
-    todos,
-    setTodos,
+    dailyTodos,
+    today,
+    setDailyTodos,
     inputText,
     searchText,
     selectedCategoryId,
@@ -35,7 +36,7 @@ function App() {
     handleUpdateTodo
   } = todoState
 
-  const categoryState = useCategory(setTodos, setError, setLoading)
+  const categoryState = useCategory(setDailyTodos, setError, setLoading)
   const {
     categories,
     categoryName,
@@ -44,25 +45,34 @@ function App() {
     handleDeleteCategory
   } = categoryState
 
-  const localStrage = useInitializeApp(todos, categories, filter, selectedCategoryId, setTodos, setError, setLoading)
+  const localStrage = useInitializeApp(dailyTodos, categories, filter, selectedCategoryId, setDailyTodos, setError, setLoading)
 
-  function filterByStatus(todos: Todo[], filter: Filter) {
-      if (filter === "all") return todos
-      return todos.filter(todo => todo.status === filter)
+  const filteredTodos = dailyTodos.map(day => {
+    if (day.date !== today) {
+      return day
     }
-  
-  function filterBySearch(todos: Todo[], searchText: string) {
-    return todos.filter(todo => todo.text.includes(searchText))
-  }
-  
-  const filteredTodos = filterBySearch(
-    filterByStatus(todos, filter),
-    searchText
-  )
+    return {
+      ...day,
+      todos: day.todos.filter(todo => {
+        const matchFilter = filter === "all" || todo.status === filter
 
-  const todoByCategory = filteredTodos.filter(
-    (todo) => todo.categoryId === selectedCategoryId
-  )
+        const matchSearch = todo.text.includes(searchText)
+
+        return matchFilter && matchSearch
+      })
+    }
+  })
+  
+
+  const todoByCategory = filteredTodos.map(day => {
+    if (day.date !== today) {
+          return day
+        }
+        return {
+          ...day,
+          todos: day.todos.filter(todo => todo.categoryId === selectedCategoryId)
+        }
+      })
 
 
   return (
@@ -70,7 +80,8 @@ function App() {
       {view === "detail" ? (
         <TodoDetailView
             categories={categories}
-            todos={todos}
+            dailyTodos={dailyTodos}
+            today={today}
             categoryName={categoryName}
             setView={setView}
             setSelectedCategoryId={setSelectedCategoryId}
@@ -81,8 +92,9 @@ function App() {
         ) : (
           <div className="CategoryList">
           <TodoListView
-            todos={todos} 
+            dailyTodos={dailyTodos}
             todoByCategory={todoByCategory}
+            today={today}
             selectedCategoryId={selectedCategoryId}
             searchText={searchText}
             inputText={inputText}
