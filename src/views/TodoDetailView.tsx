@@ -1,5 +1,4 @@
 import type { View, Category, DailyTodo } from '../components/types'
-import {useState} from 'react'
 
 type Props = {
   categories: Category[]

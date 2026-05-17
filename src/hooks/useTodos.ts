@@ -1,8 +1,8 @@
 import { useState } from "react"
 import type { Dispatch, SetStateAction } from 'react'
-import type { DailyTodo, Todo, Filter } from "../components/types"
+import type { DailyTodo, Todo } from "../components/types"
 
-function useTodo(filter: Filter, setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>> ) {
+function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>> ) {
     const [dailyTodos, setDailyTodos] = useState<DailyTodo[]>(() => {
       const saved = localStorage.getItem("todos")
       return saved ? JSON.parse(saved) : []
@@ -10,7 +10,12 @@ function useTodo(filter: Filter, setError: Dispatch<SetStateAction<string | null
     const [inputText, setInputText] = useState<string>("")
     const [searchText, setSearchText] = useState<string>("")
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0)
-    const today = new Date().toISOString().split("T")[0]
+    const today = new Intl.DateTimeFormat("ja-JP", {
+      timeZone: "Asia/Tokyo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit"
+    }).format(new Date())
     const todayDate = dailyTodos.find(day => day.date === today)
     const todayTodos = todayDate?.todos ?? []
 

@@ -1,7 +1,5 @@
 import type { Todo } from "./types"
-import { useState } from "react"
-import { useEffect } from "react"
-import { useRef } from "react"
+import { useState, useEffect, useRef } from "react"
 
 type Props = {
     todo: Todo

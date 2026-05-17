@@ -1,10 +1,10 @@
 import { useEffect } from "react"
 import type { Dispatch, SetStateAction } from 'react'
-import type { ApiTodo, Todo, Filter, Category, DailyTodo } from "../components/types"
+import type { ApiTodo, Filter, Category, DailyTodo } from "../components/types"
 
 
 function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], filter: Filter, selectedCategoryId: number, setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>,
-  setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>){
+  setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, today: string){
 
     useEffect(() => {
       setLoading(true)
@@ -12,8 +12,6 @@ function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], filte
       const saved = localStorage.getItem("todos")
       if (saved) {
         const parsed = JSON.parse(saved)
-
-        const today = new Date().toLocaleDateString("sv-SE")
 
         const todayDate = parsed.find(
           (day: DailyTodo) => day.date === today

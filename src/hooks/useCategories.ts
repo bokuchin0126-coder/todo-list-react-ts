@@ -3,14 +3,13 @@ import type { Dispatch, SetStateAction } from 'react'
 import type { Category, DailyTodo } from "../components/types"
 
 function useCategory(setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, setError: Dispatch<SetStateAction<string | null>>, 
-    setLoading: Dispatch<SetStateAction<boolean>>) {
+    setLoading: Dispatch<SetStateAction<boolean>>, today: string) {
 
     const [categories, setCategories] = useState<Category[]>(() => {
       const saved = localStorage.getItem("categories")
       return saved ? JSON.parse(saved) : []
     })
     const [categoryName, setCategoryName] = useState<string>("")
-    const today = new Date().toISOString().split("T")[0]
 
      const handleAddCategory = () => {
     if (categoryName.trim() === "") return 

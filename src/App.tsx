@@ -4,7 +4,7 @@ import  TodoDetailView  from './views/TodoDetailView'
 import useTodo from './hooks/useTodos'
 import useCategory from './hooks/useCategories'
 import useInitializeApp from './hooks/useInitializeApp'
-import type { DailyTodo, Filter, View } from './components/types'
+import type { Filter, View } from './components/types'
 import './App.css'
 
 
@@ -18,7 +18,7 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
 
-  const todoState = useTodo(filter, setError, setLoading)
+  const todoState = useTodo(setError, setLoading)
   const {
     dailyTodos,
     today,
@@ -36,7 +36,7 @@ function App() {
     handleUpdateTodo
   } = todoState
 
-  const categoryState = useCategory(setDailyTodos, setError, setLoading)
+  const categoryState = useCategory(setDailyTodos, setError, setLoading, today)
   const {
     categories,
     categoryName,
@@ -45,7 +45,7 @@ function App() {
     handleDeleteCategory
   } = categoryState
 
-  const localStrage = useInitializeApp(dailyTodos, categories, filter, selectedCategoryId, setDailyTodos, setError, setLoading)
+  const localStrage = useInitializeApp(dailyTodos, categories, filter, selectedCategoryId, setDailyTodos, setError, setLoading, today)
 
   const filteredTodos = dailyTodos.map(day => {
     if (day.date !== today) {
