@@ -1,12 +1,12 @@
 import  TodoItem  from '../components/TodoItem'
-import type { DailyTodo, Filter, View } from '../components/types'
+import type { DailyTodo, Filter, View, Todo } from '../components/types'
 import '../App.css'
 
 
 type Props = {
   dailyTodos: DailyTodo[]
-  todoByCategory: DailyTodo[]
-  today: string
+  todoByCategory: Todo[]
+  selectedDate: string
   selectedCategoryId: number | null
   searchText: string
   inputText: string
@@ -24,11 +24,11 @@ type Props = {
   onUpdate: (id: number, text: string) => void
 }
 
-function TodoListView({ dailyTodos, todoByCategory, today, selectedCategoryId, searchText, inputText, filter, error, loading, setView, setSearchText, 
+function TodoListView({ dailyTodos, todoByCategory, selectedDate, selectedCategoryId, searchText, inputText, filter, error, loading, setView, setSearchText, 
   setInputText, setFilter, onAddTodo, onDelete, onToggle, onToggleEdit, onUpdate }: Props) {
 
   const todosInCategory = dailyTodos.map(day => {
-    if (day.date !== today) {
+    if (day.date !== selectedDate) {
           return day
         }
         return {
@@ -83,8 +83,7 @@ function TodoListView({ dailyTodos, todoByCategory, today, selectedCategoryId, s
         {loading && <p>ローディング中...</p>}
         {error && <p>{error}</p>}
 
-        {todoByCategory.map(day => 
-        day.todos.map(todo => (
+        {todoByCategory.map(todo => 
           <TodoItem 
             key={todo.id} 
             todo={todo} 
@@ -94,7 +93,7 @@ function TodoListView({ dailyTodos, todoByCategory, today, selectedCategoryId, s
             onToggleEdit={onToggleEdit}
             onUpdate={onUpdate}
           />
-        )))}
+        )}
         
       </div>
       <div>

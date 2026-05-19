@@ -21,8 +21,9 @@ function App() {
   const todoState = useTodo(setError, setLoading)
   const {
     dailyTodos,
-    today,
+    selectedDate,
     setDailyTodos,
+    currentTodos,
     inputText,
     searchText,
     selectedCategoryId,
@@ -33,10 +34,11 @@ function App() {
     handleToggleTodo,
     handleDeleteTodo,
     handleToggleEdit,
-    handleUpdateTodo
+    handleUpdateTodo,
+    changeDate
   } = todoState
 
-  const categoryState = useCategory(setDailyTodos, setError, setLoading, today)
+  const categoryState = useCategory(setDailyTodos, setError, setLoading, selectedDate)
   const {
     categories,
     categoryName,
@@ -45,34 +47,18 @@ function App() {
     handleDeleteCategory
   } = categoryState
 
-  const localStrage = useInitializeApp(dailyTodos, categories, filter, selectedCategoryId, setDailyTodos, setError, setLoading, today)
+  const localStrage = useInitializeApp(dailyTodos, categories, filter, selectedCategoryId, setDailyTodos, setError, setLoading,selectedDate)
 
-  const filteredTodos = dailyTodos.map(day => {
-    if (day.date !== today) {
-      return day
-    }
-    return {
-      ...day,
-      todos: day.todos.filter(todo => {
-        const matchFilter = filter === "all" || todo.status === filter
+  const filteredTodos = currentTodos.filter(todo => {
+    const matchFilter = filter === "all" || todo.status === filter
 
-        const matchSearch = todo.text.includes(searchText)
+    const matchSearch = todo.text.includes(searchText)
 
-        return matchFilter && matchSearch
-      })
-    }
+    return matchFilter && matchSearch
   })
   
 
-  const todoByCategory = filteredTodos.map(day => {
-    if (day.date !== today) {
-          return day
-        }
-        return {
-          ...day,
-          todos: day.todos.filter(todo => todo.categoryId === selectedCategoryId)
-        }
-      })
+  const todoByCategory = filteredTodos.filter(todo => todo.categoryId === selectedCategoryId)
 
 
   return (
@@ -81,20 +67,21 @@ function App() {
         <TodoDetailView
             categories={categories}
             dailyTodos={dailyTodos}
-            today={today}
+            selectedDate={selectedDate}
             categoryName={categoryName}
             setView={setView}
             setSelectedCategoryId={setSelectedCategoryId}
             setCategoryName={setCategoryName}
             onAddCategory={handleAddCategory}
             onDeleteCategory={handleDeleteCategory}
+            onChangeDate={changeDate}
           />
         ) : (
           <div className="CategoryList">
           <TodoListView
             dailyTodos={dailyTodos}
             todoByCategory={todoByCategory}
-            today={today}
+            selectedDate={selectedDate}
             selectedCategoryId={selectedCategoryId}
             searchText={searchText}
             inputText={inputText}

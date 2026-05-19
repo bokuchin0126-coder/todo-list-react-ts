@@ -4,7 +4,7 @@ import type { ApiTodo, Filter, Category, DailyTodo } from "../components/types"
 
 
 function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], filter: Filter, selectedCategoryId: number, setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>,
-  setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, today: string){
+  setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, selectedDate: string){
 
     useEffect(() => {
       setLoading(true)
@@ -14,12 +14,12 @@ function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], filte
         const parsed = JSON.parse(saved)
 
         const todayDate = parsed.find(
-          (day: DailyTodo) => day.date === today
+          (day: DailyTodo) => day.date === selectedDate
         )
 
         if (!todayDate) {
           const newDailyTodo: DailyTodo = {
-            date: today,
+            date: selectedDate,
             todos: []
           }
           parsed.push(newDailyTodo)
@@ -64,7 +64,7 @@ function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], filte
       }
 
       fetchDate()
-    }, [])
+    }, [selectedDate])
 
     useEffect(() => {
       localStorage.setItem("todos", JSON.stringify(dailyTodos))

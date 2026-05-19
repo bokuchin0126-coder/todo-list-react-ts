@@ -4,20 +4,21 @@ type Props = {
   categories: Category[]
   dailyTodos: DailyTodo[]
   categoryName: string
-  today: string
+  selectedDate: string
   setSelectedCategoryId: (number: number) => void
   setView: (view: View) => void
   setCategoryName: (name: string) => void
   onAddCategory: () => void
   onDeleteCategory: (id: number) => void
+  onChangeDate: (number: number) => void
 }
 
-function TodoDetailView({ categories, dailyTodos, categoryName, today, setSelectedCategoryId, setView, setCategoryName,
-   onAddCategory, onDeleteCategory }: Props) {
+function TodoDetailView({ categories, dailyTodos, categoryName, selectedDate, setSelectedCategoryId, setView, setCategoryName,
+   onAddCategory, onDeleteCategory, onChangeDate }: Props) {
 
   function getProgressByCategory(categoryId: number) {
 
-    const todayDate = dailyTodos.find(day => day.date === today)
+    const todayDate = dailyTodos.find(day => day.date === selectedDate)
 
     const todosInCategory = todayDate?.todos.filter(todo => todo.categoryId === categoryId) ?? []
 
@@ -32,6 +33,11 @@ function TodoDetailView({ categories, dailyTodos, categoryName, today, setSelect
         <div className="detail">
           <h2>カテゴリ</h2>
 
+          <div className="date-control">
+            <button onClick={() => onChangeDate(-1)}>←</button>
+            <h3>{selectedDate}</h3>
+            <button onClick={() => onChangeDate(1)}>→</button>
+          </div>
           <div>
             <input
               value={categoryName}

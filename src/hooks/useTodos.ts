@@ -10,15 +10,29 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
     const [inputText, setInputText] = useState<string>("")
     const [searchText, setSearchText] = useState<string>("")
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0)
-    const today = new Intl.DateTimeFormat("ja-JP", {
+    const today = new Intl.DateTimeFormat("en-CA", {
       timeZone: "Asia/Tokyo",
       year: "numeric",
       month: "2-digit",
       day: "2-digit"
     }).format(new Date())
-    const todayDate = dailyTodos.find(day => day.date === today)
-    const todayTodos = todayDate?.todos ?? []
+  
+    const [selectedDate, setSelectedDate] = useState(today)
+    const currentDay = dailyTodos.find(day => day.date === selectedDate)
+    const currentTodos = currentDay?.todos ?? []
 
+    const changeDate = (number: number) => {
+      const date = new Date(selectedDate)
+      date.setDate(date.getDate() + number)
+
+      const formatted = new Intl.DateTimeFormat("en-CA", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+      }).format(date)
+
+      setSelectedDate(formatted)
+    }
 
     const handleAddTodo = async () => {
     if (!inputText.trim()) return
@@ -46,7 +60,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
       }
 
       setDailyTodos(prev => prev.map(day => {
-        if (day.date !== today) {
+        if (day.date !== selectedDate) {
           return day
         }
         return {
@@ -70,7 +84,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
         method: "DELETE"
       })
       setDailyTodos(prev => prev.map(day => {
-        if (day.date !== today) {
+        if (day.date !== selectedDate) {
           return day
         }
         return {
@@ -89,7 +103,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
   const handleToggleTodo = async (id: number) => {
     setLoading(true)
     try {
-      const target = todayTodos.find(day => day.id === id)
+      const target = currentTodos.find(day => day.id === id)
       if (!target) return 
 
       const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
@@ -103,7 +117,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
       })
 
       setDailyTodos(prev => prev.map(day => {
-        if (day.date !== today) {
+        if (day.date !== selectedDate) {
           return day
         }
         return {
@@ -124,7 +138,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
   
     const handleToggleEdit = (id: number) => {
       setDailyTodos(prev => prev.map(day => {
-        if (day.date !== today) {
+        if (day.date !== selectedDate) {
           return day
         }
         return {
@@ -138,7 +152,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
   
     const handleUpdateTodo = (id: number, newText: string) => {
       setDailyTodos(prev => prev.map(day => {
-        if (day.date !== today) {
+        if (day.date !== selectedDate) {
           return day
         }
         return {
@@ -152,8 +166,9 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
   
     return {
         dailyTodos,
-        today,
+        selectedDate,
         setDailyTodos,
+        currentTodos,
         inputText,
         searchText,
         selectedCategoryId,
@@ -164,7 +179,8 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
         handleToggleTodo,
         handleDeleteTodo,
         handleToggleEdit,
-        handleUpdateTodo
+        handleUpdateTodo,
+        changeDate
     }
 }
 
