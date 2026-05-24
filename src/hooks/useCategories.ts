@@ -1,36 +1,74 @@
 import { useState } from "react"
 import type { Dispatch, SetStateAction } from 'react'
-import type { Category, DailyTodo } from "../components/types"
+import type { Category, DailyTodo, DailyCategory } from "../components/types"
 
 function useCategory(setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, setError: Dispatch<SetStateAction<string | null>>, 
     setLoading: Dispatch<SetStateAction<boolean>>, selectedDate: string) {
 
-    const [categories, setCategories] = useState<Category[]>(() => {
+    
+    const [dailyCategories, setDailyCategories] = useState<DailyCategory[]>(() => {
       const saved = localStorage.getItem("categories")
       return saved ? JSON.parse(saved) : []
     })
     const [categoryName, setCategoryName] = useState<string>("")
+    const currentDay = dailyCategories.find(category => category.date === selectedDate)
+    const currentCategories = currentDay?.categories ?? []
 
-     const handleAddCategory = () => {
-    if (categoryName.trim() === "") return 
- 
-    setLoading(true)
-    try {
-      setCategories(prev => [...prev, {id: Date.now(), name: categoryName}])
-      setCategoryName("")
-    } catch {
-      setError("カテゴリーの追加に失敗しました")
-    } finally {
-      setError(null)
-      setLoading(false)
+    const handleAddCategory = () => {
+      if (categoryName.trim() === "") return 
+      setLoading(true)
+
+      if (currentDay) {
+        try {
+          setDailyCategories(prev => prev.map(day => {
+            if (day.date !== selectedDate) {
+              return day
+            }
+            return {
+              ...day,
+              categories: [...day.categories, {
+                id: Date.now(),
+                name: categoryName
+              }]
+            }
+          }))
+          setCategoryName("")
+        } catch {
+          setError("カテゴリーの追加に失敗しました")
+        } finally {
+          setError(null)
+          setLoading(false)
+        }
+      } else {
+        setDailyCategories(prev => [
+          ...prev,
+          {
+            date: selectedDate,
+            categories: [
+              {
+                id: Date.now(),
+                name: categoryName
+              }
+            ]
+          }
+        ])
     }
+    setCategoryName("")
   }
 
   const handleDeleteCategory = (id: number) => {
     setLoading(true)
 
     try {
-      setCategories(prev => prev.filter(category => category.id !== id))
+      setDailyCategories(prev => prev.map(day => {
+        if (day.date !== selectedDate) {
+          return day
+        }
+        return {
+          ...day,
+          categories: day.categories.filter(category => category.id !== id)
+        }
+      }))
 
       setDailyTodos(prev => prev.map(day => {
         if (day.date !== selectedDate) {
@@ -51,12 +89,14 @@ function useCategory(setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, setEr
   }
 
   return {
-      categories,
+      dailyCategories,
       categoryName,
+      currentCategories,
       setCategoryName,
       handleAddCategory,
       handleDeleteCategory
   }
 }
+
 
 export default useCategory

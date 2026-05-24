@@ -1,9 +1,10 @@
-import type { View, Category, DailyTodo } from '../components/types'
+import type { View, DailyCategory, DailyTodo, Category } from '../components/types'
 
 type Props = {
-  categories: Category[]
+  dailyCategories: DailyCategory[]
   dailyTodos: DailyTodo[]
   categoryName: string
+  currentCategories: Category[]
   selectedDate: string
   setSelectedCategoryId: (number: number) => void
   setView: (view: View) => void
@@ -13,7 +14,7 @@ type Props = {
   onChangeDate: (number: number) => void
 }
 
-function TodoDetailView({ categories, dailyTodos, categoryName, selectedDate, setSelectedCategoryId, setView, setCategoryName,
+function TodoDetailView({ dailyCategories, dailyTodos, categoryName, currentCategories, selectedDate, setSelectedCategoryId, setView, setCategoryName,
    onAddCategory, onDeleteCategory, onChangeDate }: Props) {
 
   function getProgressByCategory(categoryId: number) {
@@ -53,7 +54,7 @@ function TodoDetailView({ categories, dailyTodos, categoryName, selectedDate, se
             <button onClick={() => onAddCategory}>追加</button>
           </div>
           <div>
-            {categories.map((category: Category) => (
+            {currentCategories.map((category: Category) => (
               <div key={category.id}>
                 <button onClick={() => {setSelectedCategoryId(category.id), setView("list")}}>
                   {category.name}{getProgressByCategory(category.id)}

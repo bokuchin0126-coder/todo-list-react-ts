@@ -40,14 +40,15 @@ function App() {
 
   const categoryState = useCategory(setDailyTodos, setError, setLoading, selectedDate)
   const {
-    categories,
+    dailyCategories,
     categoryName,
+    currentCategories,
     setCategoryName,
     handleAddCategory,
     handleDeleteCategory
   } = categoryState
 
-  const localStrage = useInitializeApp(dailyTodos, categories, filter, selectedCategoryId, setDailyTodos, setError, setLoading,selectedDate)
+  const localStrage = useInitializeApp(dailyTodos, dailyCategories, filter, selectedCategoryId, setDailyTodos, setError, setLoading,selectedDate)
 
   const filteredTodos = currentTodos.filter(todo => {
     const matchFilter = filter === "all" || todo.status === filter
@@ -65,10 +66,11 @@ function App() {
     <>
       {view === "detail" ? (
         <TodoDetailView
-            categories={categories}
+            dailyCategories={dailyCategories}
             dailyTodos={dailyTodos}
             selectedDate={selectedDate}
             categoryName={categoryName}
+            currentCategories={currentCategories}
             setView={setView}
             setSelectedCategoryId={setSelectedCategoryId}
             setCategoryName={setCategoryName}
