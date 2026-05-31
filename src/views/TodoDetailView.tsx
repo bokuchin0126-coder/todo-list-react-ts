@@ -1,21 +1,26 @@
-import type { View, DailyCategory, DailyTodo, Category } from '../components/types'
+import type { DailyCategory, Category } from '../components/types'
+import { Link } from "react-router-dom" 
+import { TodoContext } from "../context/TodoContext"
+import { useContext } from "react" 
 
 type Props = {
   dailyCategories: DailyCategory[]
-  dailyTodos: DailyTodo[]
   categoryName: string
   currentCategories: Category[]
-  selectedDate: string
   setSelectedCategoryId: (number: number) => void
-  setView: (view: View) => void
   setCategoryName: (name: string) => void
-  onAddCategory: () => void
-  onDeleteCategory: (id: number) => void
-  onChangeDate: (number: number) => void
+  handleAddCategory: () => void
+  handleDeleteCategory: (id: number) => void
+  handleChangeDate: (number: number) => void
 }
 
-function TodoDetailView({ dailyCategories, dailyTodos, categoryName, currentCategories, selectedDate, setSelectedCategoryId, setView, setCategoryName,
-   onAddCategory, onDeleteCategory, onChangeDate }: Props) {
+function TodoDetailView({ dailyCategories, categoryName, currentCategories, setSelectedCategoryId, setCategoryName,
+   handleAddCategory, handleDeleteCategory, handleChangeDate }: Props) {
+
+    const todoContext = useContext(TodoContext)
+    if (!todoContext) return null
+
+    const { dailyTodos, selectedDate } = todoContext
 
   function getProgressByCategory(categoryId: number) {
 
@@ -35,9 +40,9 @@ function TodoDetailView({ dailyCategories, dailyTodos, categoryName, currentCate
           <h2>カテゴリ</h2>
 
           <div className="date-control">
-            <button onClick={() => onChangeDate(-1)}>←</button>
+            <button onClick={() => handleChangeDate(-1)}>←</button>
             <h3>{selectedDate}</h3>
-            <button onClick={() => onChangeDate(1)}>→</button>
+            <button onClick={() => handleChangeDate(1)}>→</button>
           </div>
           <div>
             <input
@@ -47,19 +52,23 @@ function TodoDetailView({ dailyCategories, dailyTodos, categoryName, currentCate
               onChange={(e) => setCategoryName(e.target.value)}
               onKeyDown={(e) => {
                 if(e.key === "Enter") {
-                  onAddCategory()
+                  handleAddCategory()
                 }
               }}
             />
-            <button onClick={() => onAddCategory}>追加</button>
+            <button onClick={() => handleAddCategory}>追加</button>
           </div>
           <div>
             {currentCategories.map((category: Category) => (
               <div key={category.id}>
-                <button onClick={() => {setSelectedCategoryId(category.id), setView("list")}}>
-                  {category.name}{getProgressByCategory(category.id)}
-                </button>
-                <button onClick={() => onDeleteCategory(category.id)}>
+
+                <Link to="/list">
+                  <button onClick={() => {setSelectedCategoryId(category.id)}}>
+                    {category.name}{getProgressByCategory(category.id)}
+                  </button>
+                </Link>
+
+                <button onClick={() => handleDeleteCategory(category.id)}>
                   消去
                 </button>
               </div>

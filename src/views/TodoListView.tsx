@@ -1,12 +1,13 @@
 import  TodoItem  from '../components/TodoItem'
-import type { DailyTodo, Filter, View, Todo } from '../components/types'
+import type { Filter, Todo } from '../components/types'
+import { Link } from "react-router-dom" 
+import { TodoContext } from "../context/TodoContext"
+import { useContext } from "react" 
 import '../App.css'
 
 
 type Props = {
-  dailyTodos: DailyTodo[]
   todoByCategory: Todo[]
-  selectedDate: string
   selectedCategoryId: number | null
   searchText: string
   inputText: string
@@ -16,16 +17,16 @@ type Props = {
   setSearchText: (text: string) => void
   setInputText: (text: string) => void
   setFilter: (filter: Filter) => void
-  setView: (view: View) => void
-  onAddTodo: () => void
-  onDelete: (id: number) => void
-  onToggle: (id: number) => void
-  onToggleEdit: (id: number) => void
-  onUpdate: (id: number, text: string) => void
+  handleAddTodo: () => void
 }
 
-function TodoListView({ dailyTodos, todoByCategory, selectedDate, selectedCategoryId, searchText, inputText, filter, error, loading, setView, setSearchText, 
-  setInputText, setFilter, onAddTodo, onDelete, onToggle, onToggleEdit, onUpdate }: Props) {
+function TodoListView({ todoByCategory, selectedCategoryId, searchText, inputText, filter, error, loading, setSearchText, 
+  setInputText, setFilter, handleAddTodo}: Props) {
+
+    const todoContext = useContext(TodoContext)
+    if (!todoContext) return null
+
+    const { dailyTodos, selectedDate } = todoContext
 
   const todosInCategory = dailyTodos.map(day => {
     if (day.date !== selectedDate) {
@@ -53,13 +54,13 @@ function TodoListView({ dailyTodos, todoByCategory, selectedDate, selectedCatego
           onChange={(e) => setInputText(e.target.value)} 
           onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
             if (e.key === "Enter") {
-              onAddTodo()
+              handleAddTodo()
             }
           }}
           placeholder="新しいタスクを入力..."
         />
         
-        <button onClick={onAddTodo} disabled={inputText.trim() === ""}>
+        <button onClick={handleAddTodo} disabled={inputText.trim() === ""}>
           追加
         </button>
 
@@ -88,17 +89,14 @@ function TodoListView({ dailyTodos, todoByCategory, selectedDate, selectedCatego
             key={todo.id} 
             todo={todo} 
             searchText={searchText}
-            onDelete={onDelete} 
-            onToggle={onToggle} 
-            onToggleEdit={onToggleEdit}
-            onUpdate={onUpdate}
           />
         )}
         
       </div>
-      <div>
-        <button onClick={() => setView("detail")}>戻る</button>
-      </div>
+
+      <Link to="/" >
+        <button>戻る</button>
+      </Link>
     </>
   )
 }

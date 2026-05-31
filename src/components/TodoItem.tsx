@@ -1,17 +1,20 @@
 import type { Todo } from "./types"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useContext } from "react"
+import { TodoContext } from "../context/TodoContext"
 
 type Props = {
     todo: Todo
     searchText: string
-    onDelete: (id: number) => void
-    onToggle: (id: number) => void
-    onToggleEdit: (id: number) => void
-    onUpdate: (id: number, text: string) => void
 }
 
 
-function TodoItem({ todo, searchText, onDelete, onToggle, onToggleEdit, onUpdate }: Props) {
+function TodoItem({ todo, searchText,  }: Props) {
+
+  const todoContext = useContext(TodoContext)
+  if (!todoContext) return null
+  
+  const { handleDeleteTodo, handleToggleTodo, handleUpdateTodo, handleToggleEdit } = todoContext
+
   const [tempText, setTempText] = useState<string>(todo.text)
   const divRef = useRef<HTMLDivElement>(null)
 
@@ -27,7 +30,7 @@ function TodoItem({ todo, searchText, onDelete, onToggle, onToggleEdit, onUpdate
     const handleClickOutside = (e: MouseEvent) => {
         if (divRef.current && !divRef.current.contains(e.target as Node)) {
           setTempText(todo.text)
-          onToggleEdit(todo.id)
+          handleToggleEdit(todo.id)
         }
     }
     document.addEventListener("click", handleClickOutside)
@@ -41,7 +44,7 @@ function TodoItem({ todo, searchText, onDelete, onToggle, onToggleEdit, onUpdate
         <div className="todo-item" ref={divRef}>
             
             <div className="left">
-              <button onClick={() => onToggle(todo.id)}>
+              <button onClick={() => handleToggleTodo(todo.id)}>
                   {todo.status === "active" ? "□" : "✓"}
               </button>
               
@@ -53,12 +56,12 @@ function TodoItem({ todo, searchText, onDelete, onToggle, onToggleEdit, onUpdate
                     onKeyDown={(e) => {
                       if (e.key === "Escape") {
                           setTempText(todo.text)
-                          onToggleEdit(todo.id)
+                          handleToggleEdit(todo.id)
                       }
                       if (e.key === "Enter") {
                           if (tempText.trim() === "") return
-                          onUpdate(todo.id, tempText)
-                          onToggleEdit(todo.id)
+                          handleUpdateTodo(todo.id, tempText)
+                          handleToggleEdit(todo.id)
                       }
                     }}
                     />
@@ -77,13 +80,13 @@ function TodoItem({ todo, searchText, onDelete, onToggle, onToggleEdit, onUpdate
             <div className="right">
               <button onClick={() => {
                 if (todo.isEditing) {
-                onUpdate(todo.id, tempText)
+                handleUpdateTodo(todo.id, tempText)
               }
-              onToggleEdit(todo.id)}}>
+              handleToggleEdit(todo.id)}}>
                   {todo.isEditing ? "保存" : "編集"}
               </button>
 
-              <button onClick={() => onDelete(todo.id)}>
+              <button onClick={() => handleDeleteTodo(todo.id)}>
                   消去
               </button>
             </div>

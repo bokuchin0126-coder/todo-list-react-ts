@@ -28,5 +28,3 @@ export type ApiTodo = {
 }
 
 export type Filter = "all" | "active" | "completed"
-
-export type View = "list" | "detail"
