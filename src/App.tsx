@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Routes, Route } from "react-router-dom" 
 import  TodoListView  from './views/TodoListView'
 import  TodoDetailView  from './views/TodoDetailView'
+import  TodoStatsView from './views/TodoStatsView'
 import useTodo from './hooks/useTodos'
 import useCategory from './hooks/useCategories'
 import useInitializeApp from './hooks/useInitializeApp'
@@ -23,6 +24,7 @@ function App() {
   const {
     dailyTodos,
     selectedDate,
+    today,
     setDailyTodos,
     currentTodos,
     inputText,
@@ -105,6 +107,12 @@ function App() {
               handleAddTodo={handleAddTodo}
             />
           </div>
+        } />
+
+        <Route path="/stats" element={
+          <TodoStatsView
+            today={today}
+          />
         } />
       </Routes>
     </TodoContext.Provider>

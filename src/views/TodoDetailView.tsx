@@ -74,6 +74,8 @@ function TodoDetailView({ dailyCategories, categoryName, currentCategories, setS
               </div>
             ))}
           </div>
+
+          <Link to="/stats">達成率一覧</Link>
         </div>
     )
 }

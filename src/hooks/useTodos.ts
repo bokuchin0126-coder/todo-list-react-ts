@@ -167,6 +167,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
     return {
         dailyTodos,
         selectedDate,
+        today,
         setDailyTodos,
         currentTodos,
         inputText,
