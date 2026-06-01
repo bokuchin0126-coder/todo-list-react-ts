@@ -31,6 +31,8 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
         day: "2-digit"
       }).format(date)
 
+      if (number >= 0)  if (selectedDate >= today) return today
+      
       setSelectedDate(formatted)
     }
 
