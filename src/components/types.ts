@@ -3,11 +3,6 @@ export type  DailyTodo = {
     todos: Todo[]
 }
 
-export type DailyCategory = {
-    date: string
-    categories: Category[]
-}
-
 export type Todo = {
     id: number
     text: string
@@ -19,6 +14,7 @@ export type Todo = {
 export type Category = {
     id: number
     name: string
+    isEditing: boolean
 }
 
 export type ApiTodo = {

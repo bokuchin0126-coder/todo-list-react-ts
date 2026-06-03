@@ -1,10 +1,10 @@
 import { useEffect } from "react"
 import type { Dispatch, SetStateAction } from 'react'
-import type { ApiTodo, Filter, DailyTodo, DailyCategory } from "../components/types"
+import type { ApiTodo, Filter, DailyTodo, Category } from "../components/types"
 
 
-function useInitializeApp(dailyTodos: DailyTodo[], dailyCategories: DailyCategory[], filter: Filter, selectedCategoryId: number, setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>,
-  setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, selectedDate: string){
+function useInitializeApp(dailyTodos: DailyTodo[], categories: Category[], filter: Filter, selectedCategoryId: number, setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>,
+  setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, selectedDate: string, setCategories: Dispatch<SetStateAction<Category[]>>){
 
     useEffect(() => {
       setLoading(true)
@@ -71,9 +71,9 @@ function useInitializeApp(dailyTodos: DailyTodo[], dailyCategories: DailyCategor
     }, [dailyTodos])
 
     useEffect(() => {
-      if (dailyCategories.length === 0) return
-    localStorage.setItem("categories", JSON.stringify(dailyCategories))
-    }, [dailyCategories])
+      if (categories.length === 0) return
+    localStorage.setItem("categories", JSON.stringify(categories))
+    }, [categories])
 
     useEffect(() => {
       localStorage.setItem("filter", filter)

@@ -43,15 +43,17 @@ function App() {
 
   const categoryState = useCategory(setDailyTodos, setError, setLoading, selectedDate)
   const {
-    dailyCategories,
+    categories,
+    setCategories,
     categoryName,
-    currentCategories,
     setCategoryName,
     handleAddCategory,
-    handleDeleteCategory
+    handleEditCategory,
+    handleKeepCategory
   } = categoryState
 
-  const localStrage = useInitializeApp(dailyTodos, dailyCategories, filter, selectedCategoryId, setDailyTodos, setError, setLoading,selectedDate)
+  const localStrage = useInitializeApp(dailyTodos, categories, filter, selectedCategoryId, 
+    setDailyTodos, setError, setLoading, selectedDate, setCategories)
 
   const filteredTodos = currentTodos.filter(todo => {
     const matchFilter = filter === "all" || todo.status === filter
@@ -74,20 +76,21 @@ function App() {
         handleDeleteTodo,
         handleToggleEdit,
         handleToggleTodo,
-        handleUpdateTodo
+        handleUpdateTodo,
       }}>
 
       <Routes>
         <Route path="/" element={
           <TodoDetailView
-            dailyCategories={dailyCategories}
+            inputText={inputText}
+            categories={categories}
             categoryName={categoryName}
             setSelectedCategoryId={setSelectedCategoryId}
-            currentCategories={currentCategories}
             setCategoryName={setCategoryName}
             handleAddCategory={handleAddCategory}
-            handleDeleteCategory={handleDeleteCategory}
             handleChangeDate={changeDate}
+            handleEditCategory={handleEditCategory}
+            handleKeepCategory={handleKeepCategory}
           />
         } />
   

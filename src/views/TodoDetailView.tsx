@@ -1,26 +1,29 @@
-import type { DailyCategory, Category } from '../components/types'
+import type { Category } from '../components/types'
 import { Link } from "react-router-dom" 
 import { TodoContext } from "../context/TodoContext"
-import { useContext } from "react" 
+import { useContext, useState } from "react" 
 
 type Props = {
-  dailyCategories: DailyCategory[]
+  inputText: string
+  categories: Category[]
   categoryName: string
-  currentCategories: Category[]
   setSelectedCategoryId: (number: number) => void
   setCategoryName: (name: string) => void
   handleAddCategory: () => void
-  handleDeleteCategory: (id: number) => void
   handleChangeDate: (number: number) => void
+  handleEditCategory: (id: number) => void
+  handleKeepCategory: (id: number, text: string) => void
 }
 
-function TodoDetailView({ dailyCategories, categoryName, currentCategories, setSelectedCategoryId, setCategoryName,
-   handleAddCategory, handleDeleteCategory, handleChangeDate }: Props) {
+function TodoDetailView({ inputText, categories, categoryName, setSelectedCategoryId, setCategoryName, handleEditCategory,
+   handleAddCategory, handleChangeDate, handleKeepCategory }: Props) {
 
     const todoContext = useContext(TodoContext)
     if (!todoContext) return null
 
     const { dailyTodos, selectedDate } = todoContext
+
+    const [editText, setEditText] = useState<string>("")
 
   function getProgressByCategory(categoryId: number) {
 
@@ -59,24 +62,44 @@ function TodoDetailView({ dailyCategories, categoryName, currentCategories, setS
             <button onClick={() => handleAddCategory}>追加</button>
           </div>
           <div>
-            {currentCategories.map((category: Category) => (
+            {categories.map((category: Category) => (
               <div key={category.id}>
 
+                
+
+               {category.isEditing ?
+               <div>
+                <input
+                  value={editText}
+                  autoFocus
+                  onChange={(e) => setEditText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleKeepCategory(category.id, editText)
+                    }
+                  }}
+                />
+
+               
+                <button onClick={() => {handleKeepCategory(category.id, editText)}}>
+                  保存
+                </button>
+              </div> : 
+
+              <div>
                 <Link to="/list">
                   <button onClick={() => {setSelectedCategoryId(category.id)}}>
                     {category.name}{getProgressByCategory(category.id)}
                   </button>
                 </Link>
-
-                <button onClick={() => handleDeleteCategory(category.id)}>
-                  消去
-                </button>
-              </div>
-            ))}
-          </div>
-
-          <Link to="/stats">達成率一覧</Link>
+                  <button onClick={() => {handleEditCategory(category.id), setEditText(category.name)}}>編集</button>
+              </div>}
+            </div>
+          ))}
         </div>
+
+        <Link to="/stats">達成率一覧</Link>
+      </div>
     )
 }
 
