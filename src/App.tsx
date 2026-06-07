@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { supabase } from "./lib/supabase"
 import { Routes, Route } from "react-router-dom" 
 import  TodoListView  from './views/TodoListView'
 import  TodoDetailView  from './views/TodoDetailView'
@@ -65,6 +66,19 @@ function App() {
   
 
   const todoByCategory = filteredTodos.filter(todo => todo.categoryId === selectedCategoryId)
+
+  useEffect(() => {
+    async function test() {
+      const { data, error } =
+      await supabase
+       .from("todos")
+       .select("*")
+       
+      console.log(data)
+      console.log(error)
+    }
+    test()
+  }, [])
 
 
   return (
