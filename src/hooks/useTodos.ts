@@ -1,6 +1,7 @@
 import { useState } from "react"
 import type { Dispatch, SetStateAction } from 'react'
 import type { DailyTodo, Todo } from "../components/types"
+import { supabase } from "../lib/supabase"
 
 function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>> ) {
     const [dailyTodos, setDailyTodos] = useState<DailyTodo[]>(() => {
@@ -41,24 +42,23 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
     
     setLoading(true)
     try {
-      const res = await fetch("https://jsonplaceholder.typicode.com/todos", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          title: inputText,
-          completed: false
-        })
-      })
-      const date = await res.json()
+      const { data, error } = await supabase
+        .from("todos")
+        .insert([{
+          text: inputText,
+          status: "active",
+          category_id: selectedCategoryId
+        }])
+        .select()
+      console.log(data?.[0])
+      if (!data) return error
 
-      const newTodo: Todo = {
-        id: Date.now(),
-        text: date.title,
+      const insertedTodo: Todo = {
+        id: data[0].id,
+        text: data[0].text,
         status: "active",
         isEditing: false,
-        categoryId: selectedCategoryId
+        categoryId: data[0].category_id
       }
 
       setDailyTodos(prev => prev.map(day => {
@@ -67,7 +67,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
         }
         return {
           ...day,
-          todos: [...day.todos, newTodo]
+          todos: [...day.todos, insertedTodo]
         }
       }))
       setInputText("")
