@@ -17,6 +17,18 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
       month: "2-digit",
       day: "2-digit"
     }).format(new Date())
+
+    const todayDate = async () => {
+      const { data, error } = await supabase
+        .from("todo")
+        .select()
+
+      const date = new Date(data?.[0].created_at)
+      const japanDate = date.toLocaleDateString("en-CA", {
+        timeZone: "Asia/Tokyo"
+      })
+      return japanDate
+    }
   
     const [selectedDate, setSelectedDate] = useState(today)
     const currentDay = dailyTodos.find(day => day.date === selectedDate)
@@ -82,9 +94,11 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
   const handleDeleteTodo = async (id: number) => {
     setLoading(true)
     try {
-      await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
-        method: "DELETE"
-      })
+      const { error } = await supabase
+        .from("todos")
+        .delete()
+        .eq("id", id)
+      
       setDailyTodos(prev => prev.map(day => {
         if (day.date !== selectedDate) {
           return day
@@ -93,7 +107,8 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
           ...day,
           todos: day.todos.filter(todo => todo.id !== id)
         }
-      })) 
+      }))
+
     } catch (e) {
       setError("データの消去に失敗しました")
     } finally {
@@ -104,19 +119,18 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
 
   const handleToggleTodo = async (id: number) => {
     setLoading(true)
-    try {
-      const target = currentTodos.find(day => day.id === id)
-      if (!target) return 
+    const target = currentTodos.find(todo => todo.id === id)
+    if (!target) return 
 
-      const res = await fetch(`https://jsonplaceholder.typicode.com/todos/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          completed: target.status !== "completed" 
+    try {
+      const newStatus = target.status === "completed" ? "active" : "completed"
+
+      const { error } = await supabase
+        .from("todos")
+        .update({
+          status: newStatus
         })
-      })
+        .eq("id", id)
 
       setDailyTodos(prev => prev.map(day => {
         if (day.date !== selectedDate) {
@@ -125,11 +139,10 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
         return {
           ...day,
           todos: day.todos.map(todo => (
-            todo.id === id ? {...todo, status: todo.status === "completed" ? "active" : "completed"} : todo
+            todo.id === id ? {...todo, status: newStatus} : todo
           ))
         }
       }))
-
     } catch (e) {
       setError("データの更新に失敗しました")
     } finally {
@@ -152,18 +165,35 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
       }))
     }
   
-    const handleUpdateTodo = (id: number, newText: string) => {
-      setDailyTodos(prev => prev.map(day => {
-        if (day.date !== selectedDate) {
-          return day
-        }
-        return {
-          ...day,
-          todos: day.todos.map(todo => (
-            todo.id === id ? {...todo, text: newText} : todo
-          ))
-        }
-      }))
+    const handleUpdateTodo = async (id: number, newText: string) => {
+      setLoading(true)
+      const target = currentTodos.find(todo => todo.id === id)
+      if (!target) return
+
+      try {
+        const { error } = await supabase
+          .from("todo")
+          .update({
+            text: newText
+          })
+
+        setDailyTodos(prev => prev.map(day => {
+          if (day.date !== selectedDate) {
+            return day
+          }
+          return {
+            ...day,
+            todos: day.todos.map(todo => (
+              todo.id === id ? {...todo, text: newText} : todo
+            ))
+          }
+        }))
+      } catch {
+        setError("編集に失敗しました")
+      } finally {
+        setError(null)
+        setLoading(false)
+      }
     }
   
     return {
