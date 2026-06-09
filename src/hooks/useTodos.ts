@@ -1,13 +1,10 @@
 import { useState } from "react"
 import type { Dispatch, SetStateAction } from 'react'
-import type { DailyTodo, Todo } from "../components/types"
+import type { Todo } from "../components/types"
 import { supabase } from "../lib/supabase"
 
 function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>> ) {
-    const [dailyTodos, setDailyTodos] = useState<DailyTodo[]>(() => {
-      const saved = localStorage.getItem("todos")
-      return saved ? JSON.parse(saved) : []
-    })
+    const [todos, setTodos] = useState<Todo[]>([])
     const [inputText, setInputText] = useState<string>("")
     const [searchText, setSearchText] = useState<string>("")
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0)
@@ -17,22 +14,9 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
       month: "2-digit",
       day: "2-digit"
     }).format(new Date())
-
-    const todayDate = async () => {
-      const { data, error } = await supabase
-        .from("todo")
-        .select()
-
-      const date = new Date(data?.[0].created_at)
-      const japanDate = date.toLocaleDateString("en-CA", {
-        timeZone: "Asia/Tokyo"
-      })
-      return japanDate
-    }
   
     const [selectedDate, setSelectedDate] = useState(today)
-    const currentDay = dailyTodos.find(day => day.date === selectedDate)
-    const currentTodos = currentDay?.todos ?? []
+    const currentTodos = todos.filter(todo => todo.todoDate === selectedDate)
 
     const changeDate = (number: number) => {
       const date = new Date(selectedDate)
@@ -62,7 +46,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
           category_id: selectedCategoryId
         }])
         .select()
-      console.log(data?.[0])
+
       if (!data) return error
 
       const insertedTodo: Todo = {
@@ -70,18 +54,12 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
         text: data[0].text,
         status: "active",
         isEditing: false,
-        categoryId: data[0].category_id
+        categoryId: data[0].category_id,
+        createdAt: data[0].created_at,
+        todoDate: selectedDate
       }
 
-      setDailyTodos(prev => prev.map(day => {
-        if (day.date !== selectedDate) {
-          return day
-        }
-        return {
-          ...day,
-          todos: [...day.todos, insertedTodo]
-        }
-      }))
+      setTodos(prev => [...prev, insertedTodo])
       setInputText("")
     } catch (e) {
       setError("データの追加に失敗しました")
@@ -99,16 +77,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
         .delete()
         .eq("id", id)
       
-      setDailyTodos(prev => prev.map(day => {
-        if (day.date !== selectedDate) {
-          return day
-        }
-        return {
-          ...day,
-          todos: day.todos.filter(todo => todo.id !== id)
-        }
-      }))
-
+      setTodos(prev => prev.filter(todo => todo.id !== id))
     } catch (e) {
       setError("データの消去に失敗しました")
     } finally {
@@ -132,17 +101,9 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
         })
         .eq("id", id)
 
-      setDailyTodos(prev => prev.map(day => {
-        if (day.date !== selectedDate) {
-          return day
-        }
-        return {
-          ...day,
-          todos: day.todos.map(todo => (
-            todo.id === id ? {...todo, status: newStatus} : todo
-          ))
-        }
-      }))
+      setTodos(prev => prev.map(todo => (
+        todo.id === id ? {...todo, status: todo.status === "completed" ? "active" : "completed"} : todo
+      )))
     } catch (e) {
       setError("データの更新に失敗しました")
     } finally {
@@ -152,17 +113,9 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
   }
   
     const handleToggleEdit = (id: number) => {
-      setDailyTodos(prev => prev.map(day => {
-        if (day.date !== selectedDate) {
-          return day
-        }
-        return {
-          ...day,
-          todos: day.todos.map(todo => (
-            todo.id === id ? {...todo, isEditing: !todo.isEditing} : todo
-          ))
-        }
-      }))
+      setTodos(prev => prev.map(todo => (
+        todo.id == id ? {...todo, isEditing: !todo.isEditing} : todo
+      )))
     }
   
     const handleUpdateTodo = async (id: number, newText: string) => {
@@ -177,17 +130,9 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
             text: newText
           })
 
-        setDailyTodos(prev => prev.map(day => {
-          if (day.date !== selectedDate) {
-            return day
-          }
-          return {
-            ...day,
-            todos: day.todos.map(todo => (
-              todo.id === id ? {...todo, text: newText} : todo
-            ))
-          }
-        }))
+        setTodos(prev => prev.map(todo => (
+          todo.id === id ? {...todo, text: newText} : todo
+        )))
       } catch {
         setError("編集に失敗しました")
       } finally {
@@ -197,10 +142,10 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
     }
   
     return {
-        dailyTodos,
+        todos,
         selectedDate,
         today,
-        setDailyTodos,
+        setTodos,
         currentTodos,
         inputText,
         searchText,

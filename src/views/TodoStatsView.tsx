@@ -12,13 +12,13 @@ function TodoStatsView({ today }: Props) {
     const todoContext = useContext(TodoContext)
     if (!todoContext) return null
 
-    const { dailyTodos, selectedDate } = todoContext
+    const { todos, selectedDate } = todoContext
 
     const {
         todayAchievement,
         wholeAchievement,
         continuousAchievement
-    } = calculateStats(dailyTodos, selectedDate, today)
+    } = calculateStats(todos, selectedDate, today)
 
 
     return (

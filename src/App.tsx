@@ -23,10 +23,10 @@ function App() {
 
   const todoState = useTodo(setError, setLoading)
   const {
-    dailyTodos,
+    todos,
     selectedDate,
     today,
-    setDailyTodos,
+    setTodos,
     currentTodos,
     inputText,
     searchText,
@@ -42,7 +42,7 @@ function App() {
     changeDate
   } = todoState
 
-  const categoryState = useCategory(setDailyTodos, setError, setLoading, selectedDate)
+  const categoryState = useCategory(setError, setLoading, selectedDate)
   const {
     categories,
     setCategories,
@@ -53,8 +53,8 @@ function App() {
     handleKeepCategory
   } = categoryState
 
-  const localStrage = useInitializeApp(dailyTodos, categories, filter, selectedCategoryId, 
-    setDailyTodos, setError, setLoading, selectedDate, setCategories)
+  const localStrage = useInitializeApp( categories, filter, selectedCategoryId, 
+    setError, setLoading, selectedDate, today)
 
   const filteredTodos = currentTodos.filter(todo => {
     const matchFilter = filter === "all" || todo.status === filter
@@ -67,24 +67,11 @@ function App() {
 
   const todoByCategory = filteredTodos.filter(todo => todo.categoryId === selectedCategoryId)
 
-  useEffect(() => {
-    async function test() {
-      const { data, error } =
-      await supabase
-       .from("todos")
-       .select("*")
-       
-      console.log(data)
-      console.log(error)
-    }
-    test()
-  }, [])
-
   return (
     <>
     <TodoContext.Provider
       value={{
-        dailyTodos,
+        todos,
         selectedDate,
         handleDeleteTodo,
         handleToggleEdit,

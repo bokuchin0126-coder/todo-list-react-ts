@@ -21,15 +21,15 @@ function TodoDetailView({ inputText, categories, categoryName, setSelectedCatego
     const todoContext = useContext(TodoContext)
     if (!todoContext) return null
 
-    const { dailyTodos, selectedDate } = todoContext
+    const { todos, selectedDate } = todoContext
 
     const [editText, setEditText] = useState<string>("")
 
   function getProgressByCategory(categoryId: number) {
 
-    const todayDate = dailyTodos.find(day => day.date === selectedDate)
+    const todayDate = todos.filter(todo => todo.todoDate === selectedDate)
 
-    const todosInCategory = todayDate?.todos.filter(todo => todo.categoryId === categoryId) ?? []
+    const todosInCategory = todayDate.filter(todo => todo.categoryId === categoryId) ?? []
 
     const completedCount = todosInCategory.filter(todo => todo.status === "completed").length
 

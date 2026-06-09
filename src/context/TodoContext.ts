@@ -1,8 +1,8 @@
 import { createContext } from "react"
-import type { Todo, DailyTodo } from "../components/types"
+import type { Todo } from "../components/types"
 
 type TodoContextType = {
-  dailyTodos: DailyTodo[]
+ todos: Todo[]
   selectedDate: string
   handleDeleteTodo: (id: number) => void
   handleToggleTodo: (id: number) => void

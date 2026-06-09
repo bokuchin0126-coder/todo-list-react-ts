@@ -1,8 +1,8 @@
 import { useState } from "react"
 import type { Dispatch, SetStateAction } from 'react'
-import type { DailyTodo, Category } from "../components/types"
+import type { Todo, Category } from "../components/types"
 
-function useCategory(setDailyTodos: Dispatch<SetStateAction<DailyTodo[]>>, setError: Dispatch<SetStateAction<string | null>>, 
+function useCategory(setError: Dispatch<SetStateAction<string | null>>, 
     setLoading: Dispatch<SetStateAction<boolean>>, selectedDate: string) {
 
     

@@ -26,17 +26,9 @@ function TodoListView({ todoByCategory, selectedCategoryId, searchText, inputTex
     const todoContext = useContext(TodoContext)
     if (!todoContext) return null
 
-    const { dailyTodos, selectedDate } = todoContext
+    const { todos, selectedDate } = todoContext
 
-  const todosInCategory = dailyTodos.map(day => {
-    if (day.date !== selectedDate) {
-          return day
-        }
-        return {
-          ...day,
-          todos: day.todos.filter(todo => todo.categoryId === selectedCategoryId)
-        }
-      })
+  const todosInCategory = todos.map(todo => todo.categoryId === selectedCategoryId)
 
   return (
     <>

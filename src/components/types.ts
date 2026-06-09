@@ -1,14 +1,11 @@
-export type  DailyTodo = {
-    date: string
-    todos: Todo[]
-}
-
 export type Todo = {
     id: number
     text: string
     status: "active" | "completed"
     isEditing: boolean
     categoryId: number | null
+    createdAt: string
+    todoDate: string
 }
 
 export type Category = {
