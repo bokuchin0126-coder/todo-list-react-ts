@@ -12,7 +12,6 @@ type Props = {
   searchText: string
   inputText: string
   filter: Filter
-  error: string | null
   loading: boolean
   setSearchText: (text: string) => void
   setInputText: (text: string) => void
@@ -20,13 +19,13 @@ type Props = {
   handleAddTodo: () => void
 }
 
-function TodoListView({ todoByCategory, selectedCategoryId, searchText, inputText, filter, error, loading, setSearchText, 
+function TodoListView({ todoByCategory, selectedCategoryId, searchText, inputText, filter, loading, setSearchText, 
   setInputText, setFilter, handleAddTodo}: Props) {
 
     const todoContext = useContext(TodoContext)
     if (!todoContext) return null
 
-    const { todos, selectedDate } = todoContext
+    const { todos, error } = todoContext
 
   const todosInCategory = todos.map(todo => todo.categoryId === selectedCategoryId)
 

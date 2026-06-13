@@ -21,7 +21,7 @@ function TodoDetailView({ inputText, categories, categoryName, setSelectedCatego
     const todoContext = useContext(TodoContext)
     if (!todoContext) return null
 
-    const { todos, selectedDate } = todoContext
+    const { todos, selectedDate, error } = todoContext
 
     const [editText, setEditText] = useState<string>("")
 
@@ -61,6 +61,7 @@ function TodoDetailView({ inputText, categories, categoryName, setSelectedCatego
             />
             <button onClick={() => handleAddCategory}>追加</button>
           </div>
+          {error && <p>{error}</p>}
           <div>
             {categories.map((category: Category) => (
               <div key={category.id}>

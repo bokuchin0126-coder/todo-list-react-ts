@@ -28,9 +28,14 @@ function calculateStats(todos: Todo[], selectedDate: string, today: string) {
             }).format(date)
 
             const newTodos = todos.filter(todo => todo.todoDate === formatted)
+
             if (newTodos.length === 0) {
-                date.setDate(date.getDate() - 1)
-                continue
+                if (formatted === today) {
+                    date.setDate(date.getDate() - 1)
+                    continue
+                } else {
+                    return dayNumber
+                }
             }
             const completed = newTodos.filter(todo => todo.status === "completed").length
             const achievement = (completed / newTodos.length)
@@ -43,9 +48,7 @@ function calculateStats(todos: Todo[], selectedDate: string, today: string) {
                     date.setDate(date.getDate() - 1)
                     continue
                 }
-            }
-
-            if ( achievement === 1) {
+            } else if ( achievement === 1) {
                 dayNumber += 1
                 date.setDate(date.getDate() - 1)
             } else {

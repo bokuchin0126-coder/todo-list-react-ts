@@ -21,7 +21,13 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
 
-  const todoState = useTodo(setError, setLoading)
+  const errorTime = () => {
+    setTimeout(() => {
+      setError(null)
+    }, 5000)
+  }
+
+  const todoState = useTodo(setError, setLoading, errorTime)
   const {
     todos,
     selectedDate,
@@ -53,7 +59,7 @@ function App() {
     handleKeepCategory
   } = categoryState
 
-  const localStrage = useInitializeApp( categories, filter, selectedCategoryId, 
+  const localStrage = useInitializeApp(setTodos, categories, filter, selectedCategoryId, 
     setError, setLoading, selectedDate, today)
 
   const filteredTodos = currentTodos.filter(todo => {
@@ -72,6 +78,7 @@ function App() {
     <TodoContext.Provider
       value={{
         todos,
+        error,
         selectedDate,
         handleDeleteTodo,
         handleToggleEdit,
@@ -102,7 +109,6 @@ function App() {
               inputText={inputText}
               selectedCategoryId={selectedCategoryId}
               filter={filter}
-              error={error}
               loading={loading}
               setSearchText={setSearchText}
               setInputText={setInputText}

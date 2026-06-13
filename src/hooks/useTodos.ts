@@ -3,7 +3,7 @@ import type { Dispatch, SetStateAction } from 'react'
 import type { Todo } from "../components/types"
 import { supabase } from "../lib/supabase"
 
-function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>> ) {
+function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, errorTime: () => void ) {
     const [todos, setTodos] = useState<Todo[]>([])
     const [inputText, setInputText] = useState<string>("")
     const [searchText, setSearchText] = useState<string>("")
@@ -43,18 +43,19 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
         .insert([{
           text: inputText,
           status: "active",
-          category_id: selectedCategoryId
+          category_id: selectedCategoryId,
+          todo_date: selectedDate
         }])
         .select()
 
-      if (!data) return error
+      if (error) throw error
 
       const insertedTodo: Todo = {
         id: data[0].id,
         text: data[0].text,
         status: "active",
         isEditing: false,
-        categoryId: data[0].category_id,
+        categoryId: selectedCategoryId,
         createdAt: data[0].created_at,
         todoDate: selectedDate
       }
@@ -65,7 +66,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
       setError("データの追加に失敗しました")
     } finally {
       setLoading(false)
-      setError(null)
+      errorTime()
     }
   }
 
@@ -82,7 +83,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
       setError("データの消去に失敗しました")
     } finally {
       setLoading(false)
-      setError(null)
+      errorTime()
     }
   }
 
@@ -108,7 +109,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
       setError("データの更新に失敗しました")
     } finally {
       setLoading(false)
-      setError(null)
+      errorTime()
     }
   }
   
@@ -136,8 +137,8 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
       } catch {
         setError("編集に失敗しました")
       } finally {
-        setError(null)
         setLoading(false)
+        errorTime()
       }
     }
   
