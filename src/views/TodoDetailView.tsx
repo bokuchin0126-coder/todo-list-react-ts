@@ -59,7 +59,7 @@ function TodoDetailView({ inputText, categories, categoryName, setSelectedCatego
                 }
               }}
             />
-            <button onClick={() => handleAddCategory}>追加</button>
+            <button onClick={() => handleAddCategory()}>追加</button>
           </div>
           {error && <p>{error}</p>}
           <div>

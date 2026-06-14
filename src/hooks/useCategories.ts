@@ -1,25 +1,34 @@
 import { useState } from "react"
 import type { Dispatch, SetStateAction } from 'react'
 import type { Todo, Category } from "../components/types"
+import { supabase } from "../lib/supabase"
 
 function useCategory(setError: Dispatch<SetStateAction<string | null>>, 
-    setLoading: Dispatch<SetStateAction<boolean>>, selectedDate: string) {
+    setLoading: Dispatch<SetStateAction<boolean>>, selectedDate: string, errorTime: () => void) {
 
     
-    const [categories, setCategories] = useState<Category[]>(() => {
-      const saved = localStorage.getItem("categories")
-      return saved ? JSON.parse(saved) : []
-    })
+    const [categories, setCategories] = useState<Category[]>([])
     const [categoryName, setCategoryName] = useState<string>("")
 
-    const handleAddCategory = () => {
+    const handleAddCategory = async () => {
       if (categoryName.trim() === "") return 
-      setLoading(true)
-
+      
       try {
+        setLoading(true)
+        const { data, error } = await supabase
+          .from("categories")
+          .insert({
+            name: categoryName
+          })
+          .select()
+
+        if (error) {
+          console.log(error)
+          throw error
+        }
         setCategories(prev => [...prev, {
-          id: Date.now(),
-          name: categoryName,
+          id: data[0].id,
+          name: data[0].name,
           isEditing: false
         }])
 
@@ -27,20 +36,29 @@ function useCategory(setError: Dispatch<SetStateAction<string | null>>,
       } catch {
         setError("カテゴリーの追加に失敗しました")
       } finally {
-        setError(null)
+        errorTime()
         setLoading(false)
       }
     } 
 
-    const handleKeepCategory = (id: number, text: string) => {
+    const handleKeepCategory = async (id: number, text: string) => {
       try {
+        setLoading(true)
+        const { error } = await supabase
+          .from("categories")
+          .update({
+            name: text
+          })
+          .eq("id", id)
+
         setCategories(prev => prev.map(category => (
           category.id === id ? {...category, name: text, isEditing: false} : category
         )))
       } catch {
         setError("保存に失敗しました")
       } finally {
-        setError(null)
+        errorTime()
+        setLoading(false)
       }
     }
    
@@ -52,7 +70,7 @@ function useCategory(setError: Dispatch<SetStateAction<string | null>>,
       } catch {
         setError("編集に失敗しました")
       } finally {
-        setError(null)
+        errorTime()
       }
     }
 

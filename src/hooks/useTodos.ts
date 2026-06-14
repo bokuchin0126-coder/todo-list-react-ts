@@ -7,7 +7,10 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
     const [todos, setTodos] = useState<Todo[]>([])
     const [inputText, setInputText] = useState<string>("")
     const [searchText, setSearchText] = useState<string>("")
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number>(0)
+    const [selectedCategoryId, setSelectedCategoryId] = useState<number>(() => {
+      const saved = localStorage.getItem("selectedCategoryId")
+      return saved ? Number(saved) : 0
+    })
     const today = new Intl.DateTimeFormat("en-CA", {
       timeZone: "Asia/Tokyo",
       year: "numeric",

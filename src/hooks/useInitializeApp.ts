@@ -4,9 +4,10 @@ import { supabase } from "../lib/supabase"
 import type { Todo, Filter, Category } from "../components/types"
 
 
-function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, categories: Category[], filter: Filter, selectedCategoryId: number, 
-  setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, selectedDate: string, today: string){
-
+function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, setCategories: Dispatch<SetStateAction<Category[]>>, filter: Filter, selectedCategoryId: number, 
+  setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, selectedDate: string, today: string, 
+  errorTime: () => void){
+ 
    
     useEffect(() => {
       const fetch = async () => {
@@ -21,15 +22,16 @@ function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, categories
             id: todo.id,
             text: todo.text,
             status: todo.status,
-            isEditing: todo.isEditing,
-            categoryId: todo.category_id.toString(),
+            isEditing: false,
+            categoryId: todo.category_id,
             createdAt: todo.created_at,
             todoDate: todo.todo_date
           })))
-          
+
         } catch {
           setError("データの取得に失敗しました")
         } finally {
+          errorTime()
           setLoading(false)
         }
       }
@@ -37,13 +39,36 @@ function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, categories
     }, [])
 
     useEffect(() => {
-      if (categories.length === 0) return
-    localStorage.setItem("categories", JSON.stringify(categories))
-    }, [categories])
+      const fetch = async () => {
+        try {
+          setLoading(true)
+          const { data, error } = await supabase
+            .from("categories")
+            .select("*")
+
+          if (error) throw error
+          setCategories(data.map(category => ({
+            id: category.id,
+            name: category.name,
+            isEditing: false
+          })))
+        } catch {
+          setError("データの取得に失敗しました")
+        } finally {
+          errorTime()
+          setLoading(false)
+        }
+      }
+      fetch()
+    }, [])
 
     useEffect(() => {
       localStorage.setItem("filter", filter)
     }, [filter])
+
+    useEffect(() => {
+      localStorage.setItem("selectedCategoryId", String(selectedCategoryId))
+    }, [selectedCategoryId])
 }
 
 export default useInitializeApp

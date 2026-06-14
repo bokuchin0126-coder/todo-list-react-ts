@@ -14,10 +14,4 @@ export type Category = {
     isEditing: boolean
 }
 
-export type ApiTodo = {
-    id: number
-    title: string
-    completed: boolean
-}
-
 export type Filter = "all" | "active" | "completed"

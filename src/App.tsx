@@ -48,7 +48,7 @@ function App() {
     changeDate
   } = todoState
 
-  const categoryState = useCategory(setError, setLoading, selectedDate)
+  const categoryState = useCategory(setError, setLoading, selectedDate, errorTime)
   const {
     categories,
     setCategories,
@@ -59,8 +59,8 @@ function App() {
     handleKeepCategory
   } = categoryState
 
-  const localStrage = useInitializeApp(setTodos, categories, filter, selectedCategoryId, 
-    setError, setLoading, selectedDate, today)
+  const localStrage = useInitializeApp(setTodos, setCategories, filter, selectedCategoryId, 
+    setError, setLoading, selectedDate, today, errorTime)
 
   const filteredTodos = currentTodos.filter(todo => {
     const matchFilter = filter === "all" || todo.status === filter
