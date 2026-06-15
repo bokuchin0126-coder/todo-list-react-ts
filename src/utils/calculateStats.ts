@@ -11,6 +11,7 @@ function calculateStats(todos: Todo[], selectedDate: string, today: string) {
     }
 
     const wholeAchievement = () => {
+        if (todos.length === 0) return 0
         const completedTodos = todos.filter(todo => todo.status === "completed").length
 
         return Math.floor((completedTodos / todos.length) * 100)
