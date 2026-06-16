@@ -78,6 +78,7 @@ function App() {
     <TodoContext.Provider
       value={{
         todos,
+        today,
         error,
         selectedDate,
         handleDeleteTodo,
@@ -119,9 +120,7 @@ function App() {
         } />
 
         <Route path="/stats" element={
-          <TodoStatsView
-            today={today}
-          />
+          <TodoStatsView />
         } />
       </Routes>
     </TodoContext.Provider>

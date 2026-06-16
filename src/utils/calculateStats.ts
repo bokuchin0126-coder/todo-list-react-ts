@@ -1,6 +1,6 @@
 import type { Todo } from "../components/types"
 
-function calculateStats(todos: Todo[], selectedDate: string, today: string) {
+function calculateStats(todos: Todo[], today: string) {
 
     const todayAchievement = () => {
         const todayTodos = todos.filter(todo => todo.todoDate === today)
@@ -15,6 +15,25 @@ function calculateStats(todos: Todo[], selectedDate: string, today: string) {
         const completedTodos = todos.filter(todo => todo.status === "completed").length
 
         return Math.floor((completedTodos / todos.length) * 100)
+    }
+
+    const designationAchievement = (dayNumber: number) => {
+        if (todos.length === 0) return 0
+        const date = new Date(today)
+
+        date.setDate(date.getDate() - dayNumber)
+        const formatted = new Intl.DateTimeFormat("en-CA", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit"
+            }).format(date) 
+            
+        const rengeDate = todos.filter(todo => (
+            todo.todoDate > formatted && todo.todoDate <= today
+        ))
+
+        const completed = rengeDate.filter(todo => todo.status === "completed").length
+        return Math.floor((completed / rengeDate.length) * 100)
     }
 
     const continuousAchievement = () => {
@@ -40,6 +59,8 @@ function calculateStats(todos: Todo[], selectedDate: string, today: string) {
             }
             const completed = newTodos.filter(todo => todo.status === "completed").length
             const achievement = (completed / newTodos.length)
+            console.log(formatted)
+            console.log(newTodos)
 
             if (formatted === today) {
                 if (achievement === 1) {
@@ -62,7 +83,8 @@ function calculateStats(todos: Todo[], selectedDate: string, today: string) {
     return {
         todayAchievement,
         wholeAchievement,
-        continuousAchievement
+        continuousAchievement,
+        designationAchievement
     }
 }
 

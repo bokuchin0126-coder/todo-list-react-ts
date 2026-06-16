@@ -3,6 +3,7 @@ import type { Todo } from "../components/types"
 
 type TodoContextType = {
   todos: Todo[]
+  today: string
   error: string | null
   selectedDate: string
   handleDeleteTodo: (id: number) => void
