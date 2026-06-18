@@ -2,6 +2,7 @@ import { useState } from "react"
 import type { Dispatch, SetStateAction } from 'react'
 import type { Todo } from "../components/types"
 import { supabase } from "../lib/supabase"
+import { getChangeDate } from "../utils/dateUtils"
 
 function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, errorTime: () => void ) {
     const [todos, setTodos] = useState<Todo[]>([])
@@ -22,18 +23,9 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
     const currentTodos = todos.filter(todo => todo.todoDate === selectedDate)
 
     const changeDate = (number: number) => {
-      const date = new Date(selectedDate)
-      date.setDate(date.getDate() + number)
-
-      const formatted = new Intl.DateTimeFormat("en-CA", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit"
-      }).format(date)
-
-      if (number >= 0)  if (selectedDate >= today) return today
+      const newDate = getChangeDate(selectedDate, today, number)
       
-      setSelectedDate(formatted)
+      setSelectedDate(newDate)
     }
 
     const handleAddTodo = async () => {

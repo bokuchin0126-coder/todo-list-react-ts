@@ -2,6 +2,7 @@ import type { Category } from '../components/types'
 import { Link } from "react-router-dom" 
 import { TodoContext } from "../context/TodoContext"
 import { useContext, useState } from "react" 
+import calculateStats from "../utils/calculateStats"
 
 type Props = {
   inputText: string
@@ -21,23 +22,15 @@ function TodoDetailView({ inputText, categories, categoryName, setSelectedCatego
     const todoContext = useContext(TodoContext)
     if (!todoContext) return null
 
-    const { todos, selectedDate, error } = todoContext
+    const { todos, today, selectedDate, error } = todoContext
 
     const [editText, setEditText] = useState<string>("")
 
-  function getProgressByCategory(categoryId: number) {
+    const {
+        getProgressByCategory
+    } = calculateStats(todos, today, selectedDate)
 
-    const todayDate = todos.filter(todo => todo.todoDate === selectedDate)
-
-    const todosInCategory = todayDate.filter(todo => todo.categoryId === categoryId) ?? []
-
-    const completedCount = todosInCategory.filter(todo => todo.status === "completed").length
-
-    if (todosInCategory.length === 0) return "未開始"
-
-    return Math.floor((completedCount / todosInCategory.length) * 100) + "%"
-  }
-
+  
     return (
         <div className="detail">
           <h2>カテゴリ</h2>
@@ -66,8 +59,6 @@ function TodoDetailView({ inputText, categories, categoryName, setSelectedCatego
             {categories.map((category: Category) => (
               <div key={category.id}>
 
-                
-
                {category.isEditing ?
                <div>
                 <input
@@ -90,7 +81,11 @@ function TodoDetailView({ inputText, categories, categoryName, setSelectedCatego
               <div>
                 <Link to="/list">
                   <button onClick={() => {setSelectedCategoryId(category.id)}}>
-                    {category.name}{getProgressByCategory(category.id)}
+                    <p>
+                      {category.name}
+                      {getProgressByCategory(category.id)}
+                      {getProgressByCategory(category.id) === "未開始" ? "" : "%"}
+                    </p>
                   </button>
                 </Link>
                   <button onClick={() => {handleEditCategory(category.id), setEditText(category.name)}}>編集</button>

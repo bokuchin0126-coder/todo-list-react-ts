@@ -1,6 +1,6 @@
 import type { Todo } from "../components/types"
 
-function calculateStats(todos: Todo[], today: string) {
+function calculateStats(todos: Todo[], today: string, selectedDate: string) {
 
     const todayAchievement = () => {
         const todayTodos = todos.filter(todo => todo.todoDate === today)
@@ -59,8 +59,6 @@ function calculateStats(todos: Todo[], today: string) {
             }
             const completed = newTodos.filter(todo => todo.status === "completed").length
             const achievement = (completed / newTodos.length)
-            console.log(formatted)
-            console.log(newTodos)
 
             if (formatted === today) {
                 if (achievement === 1) {
@@ -80,11 +78,25 @@ function calculateStats(todos: Todo[], today: string) {
         return dayNumber
     }
 
+    function getProgressByCategory(categoryId: number) {
+
+    const todayDate = todos.filter(todo => todo.todoDate === selectedDate)
+
+    const todosInCategory = todayDate.filter(todo => todo.categoryId === categoryId) ?? []
+
+    const completedCount = todosInCategory.filter(todo => todo.status === "completed").length
+
+    if (todosInCategory.length === 0) return "未開始"
+
+    return Math.floor((completedCount / todosInCategory.length) * 100)
+  }
+
     return {
         todayAchievement,
         wholeAchievement,
         continuousAchievement,
-        designationAchievement
+        designationAchievement,
+        getProgressByCategory
     }
 }
 

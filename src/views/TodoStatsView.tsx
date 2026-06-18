@@ -9,14 +9,14 @@ function TodoStatsView() {
     const todoContext = useContext(TodoContext)
     if (!todoContext) return null
 
-    const { todos, today } = todoContext
+    const { todos, today, selectedDate } = todoContext
 
     const {
         todayAchievement,
         wholeAchievement,
         continuousAchievement,
         designationAchievement
-    } = calculateStats(todos, today)
+    } = calculateStats(todos, today, selectedDate)
 
 
     return (

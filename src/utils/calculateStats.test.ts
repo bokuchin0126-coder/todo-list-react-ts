@@ -1,4 +1,4 @@
-import { describe, test, expect } from "vitest"
+import { describe, test, expect, beforeEach } from "vitest"
 import calculateStats from "./calculateStats"
 import type { Todo } from "../components/types"
 
@@ -41,6 +41,7 @@ describe("todayAchievement", () => {
 
         const stats = calculateStats(
             todos,
+            today,
             today
         )
 
@@ -58,6 +59,7 @@ describe("todayAchievement", () => {
         ]
         const stats = calculateStats(
             todos,
+            today,
             today
         )
 
@@ -73,6 +75,7 @@ describe("todayAchievement", () => {
         ]
         const stats = calculateStats(
             todos,
+            today,
             today
         )
 
@@ -84,6 +87,7 @@ describe("todayAchievement", () => {
 
         const stats = calculateStats(
             todos,
+            today,
             today
         )
         expect(stats.todayAchievement()).toBe(0)
@@ -103,6 +107,7 @@ describe("wholeAchievement", () => {
         ]
         const stats = calculateStats(
             todos,
+            today,
             today
         )
         expect(stats.wholeAchievement()).toBe(100)
@@ -119,6 +124,7 @@ describe("wholeAchievement", () => {
         ]
         const stats = calculateStats(
             todos,
+            today,
             today
         )
         expect(stats.wholeAchievement()).toBe(50)
@@ -133,6 +139,7 @@ describe("wholeAchievement", () => {
         ]
         const stats = calculateStats(
             todos,
+            today,
             today
         )
         expect(stats.wholeAchievement()).toBe(0)
@@ -142,6 +149,7 @@ describe("wholeAchievement", () => {
         const todos: Todo[] = []
         const stats = calculateStats(
             todos,
+            today,
             today
         )
         expect(stats.wholeAchievement()).toBe(0)
@@ -171,6 +179,7 @@ describe("designationAchievement", () => {
         ]
         const stats = calculateStats(
             todos,
+            today,
             today
         )
         expect(stats.designationAchievement(2)).toBe(100)
@@ -196,6 +205,7 @@ describe("designationAchievement", () => {
         ]
         const stats = calculateStats(
             todos,
+            today,
             today
         )
         expect(stats.designationAchievement(2)).toBe(75)
@@ -221,6 +231,7 @@ describe("designationAchievement", () => {
         ]
         const stats = calculateStats(
             todos,
+            today,
             today
         )
         expect(stats.designationAchievement(2)).toBe(50)
@@ -243,6 +254,7 @@ describe("designationAchievement", () => {
         ]
         const stats = calculateStats(
             todos,
+            today,
             today
         )
         expect(stats.designationAchievement(2)).toBe(0)
@@ -252,6 +264,7 @@ describe("designationAchievement", () => {
         const todos: Todo[] = []
         const stats = calculateStats(
             todos,
+            today,
             today
         ) 
         expect(stats.designationAchievement(2)).toBe(0)
@@ -274,6 +287,7 @@ describe("designationAchievement", () => {
         ]
         const stats = calculateStats(
             todos,
+            today,
             today
         )
         expect(stats.designationAchievement(2)).toBe(100)
@@ -294,6 +308,7 @@ describe("continuousAchievement", () => {
         ]
         const stats = calculateStats(
             todos,
+            today,
             today
         )
         expect(stats.continuousAchievement()).toBe(2)
@@ -311,6 +326,7 @@ describe("continuousAchievement", () => {
         ]
         const stats = calculateStats(
             todos,
+            today,
             today
         )
         expect(stats.continuousAchievement()).toBe(1)
@@ -327,6 +343,7 @@ describe("continuousAchievement", () => {
         ]
         const stats = calculateStats(
             todos,
+            today,
             today
         )
         expect(stats.continuousAchievement()).toBe(1)
@@ -349,6 +366,7 @@ describe("continuousAchievement", () => {
         ]
         const stats = calculateStats(
             todos,
+            today,
             today
         )
         expect(stats.continuousAchievement()).toBe(2)
@@ -364,6 +382,7 @@ describe("continuousAchievement", () => {
         ]
         const stats = calculateStats(
             todos,
+            today,
             today
         )
         expect(stats.continuousAchievement()).toBe(0)
@@ -373,8 +392,91 @@ describe("continuousAchievement", () => {
         const todos: Todo[] = []
         const stats = calculateStats(
             todos,
+            today,
             today
         )
         expect(stats.continuousAchievement()).toBe(0)
+    })
+})
+
+describe("getProgressByCategory", () => {
+    let todos: Todo[] = []
+    beforeEach(() => {
+        todos = [
+            createTodo(),
+            createTodo({ id: 2 }),
+            createTodo({ id: 3 }),
+            createTodo({ id: 4 })
+        ]
+    })
+
+    test("returns 100 when all todos in the selected category and date are completed", () => {
+        todos = todos.map(todo => ({
+            ...todo,
+            status: "completed"
+        }))
+        const stats = calculateStats(
+            todos,
+            today,
+            today
+        )
+        expect(stats.getProgressByCategory(1)).toBe(100)
+    })
+    
+    test("returns 50 when half of todos in the selected category and date are completed", () => {
+        todos[2].status = "completed"
+        todos[3].status = "completed"
+
+        const stats = calculateStats(
+            todos,
+            today,
+            today
+        )
+        expect(stats.getProgressByCategory(1)).toBe(50)
+    })
+
+    test("returns 0 when no todos in the selected category and date are completed", () => {
+        const stats = calculateStats(
+            todos,
+            today,
+            today
+        )
+        expect(stats.getProgressByCategory(1)).toBe(0)
+    })
+
+    test("returns 未開始 when there are no todos in the selected category and date", () => {
+        todos = []
+        const stats = calculateStats(
+            todos,
+            today,
+            today
+        )
+        expect(stats.getProgressByCategory(1)).toBe("未開始")
+    })
+
+    test("ignores todos from other categories", () => {
+        todos[1].status = "completed"
+        todos[2].categoryId = 2
+        todos[3].categoryId = 2
+
+        const stats = calculateStats(
+            todos,
+            today,
+            today
+        )
+        expect(stats.getProgressByCategory(1)).toBe(50)
+    })
+
+    test("ignores todos from other dates", () => {
+        todos[1].status = "completed"
+        todos[2].todoDate = day(-1)
+        todos[3].todoDate = day(-1)
+
+        const stats = calculateStats(
+            todos,
+            today,
+            today
+        )
+        expect(stats.getProgressByCategory(1)).toBe(50)
     })
 })
