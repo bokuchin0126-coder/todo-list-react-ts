@@ -1,18 +1,19 @@
 import type { Todo } from "../components/types"
+import { getTodosByDate, getCompletedTodos, getTodosByCategory, getTodosInRange } from "./filterUtils"
 
 function calculateStats(todos: Todo[], today: string, selectedDate: string) {
 
     const todayAchievement = () => {
-        const todayTodos = todos.filter(todo => todo.todoDate === today)
+        const todayTodos = getTodosByDate(todos, today)
         if (todayTodos.length === 0) return 0
-        const completed = todayTodos.filter(todo => todo.status === "completed").length
+        const completed = getCompletedTodos(todos).length
 
         return Math.floor((completed / todayTodos.length) * 100)
     }
 
     const wholeAchievement = () => {
         if (todos.length === 0) return 0
-        const completedTodos = todos.filter(todo => todo.status === "completed").length
+        const completedTodos = getCompletedTodos(todos).length
 
         return Math.floor((completedTodos / todos.length) * 100)
     }
@@ -28,11 +29,9 @@ function calculateStats(todos: Todo[], today: string, selectedDate: string) {
                 day: "2-digit"
             }).format(date) 
             
-        const rengeDate = todos.filter(todo => (
-            todo.todoDate > formatted && todo.todoDate <= today
-        ))
+        const rengeDate = getTodosInRange(todos, today, formatted)
 
-        const completed = rengeDate.filter(todo => todo.status === "completed").length
+        const completed = getCompletedTodos(rengeDate).length
         return Math.floor((completed / rengeDate.length) * 100)
     }
 
@@ -47,7 +46,7 @@ function calculateStats(todos: Todo[], today: string, selectedDate: string) {
                 day: "2-digit"
             }).format(date)
 
-            const newTodos = todos.filter(todo => todo.todoDate === formatted)
+            const newTodos = getTodosByDate(todos, formatted)
 
             if (newTodos.length === 0) {
                 if (formatted === today) {
@@ -57,7 +56,7 @@ function calculateStats(todos: Todo[], today: string, selectedDate: string) {
                     return dayNumber
                 }
             }
-            const completed = newTodos.filter(todo => todo.status === "completed").length
+            const completed = getCompletedTodos(newTodos).length
             const achievement = (completed / newTodos.length)
 
             if (formatted === today) {
@@ -80,11 +79,11 @@ function calculateStats(todos: Todo[], today: string, selectedDate: string) {
 
     function getProgressByCategory(categoryId: number) {
 
-    const todayDate = todos.filter(todo => todo.todoDate === selectedDate)
+    const todayDate = getTodosByDate(todos, selectedDate)
 
-    const todosInCategory = todayDate.filter(todo => todo.categoryId === categoryId) ?? []
+    const todosInCategory = getTodosByCategory(todayDate, categoryId) ?? []
 
-    const completedCount = todosInCategory.filter(todo => todo.status === "completed").length
+    const completedCount = getCompletedTodos(todosInCategory).length
 
     if (todosInCategory.length === 0) return "未開始"
 

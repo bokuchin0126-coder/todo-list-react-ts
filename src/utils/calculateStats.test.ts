@@ -8,10 +8,10 @@ const day = (number: number) => {
     const date = new Date(today)
     date.setDate(date.getDate() + number)
     return new Intl.DateTimeFormat("en-CA", {
-                year: "numeric",
-                month: "2-digit",
-                day: "2-digit"
-            }).format(date)
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit"
+    }).format(date)
 }
 
 const createTodo = (
@@ -282,6 +282,11 @@ describe("designationAchievement", () => {
             }),
             createTodo({
                 id: 3,
+                status: "completed",
+                todoDate: day(-1)
+            }),
+            createTodo({
+                id: 4,
                 todoDate: day(-2)
             })
         ]
