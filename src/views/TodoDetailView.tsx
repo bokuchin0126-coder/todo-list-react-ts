@@ -1,102 +1,101 @@
-import type { Category } from '../components/types'
-import { Link } from "react-router-dom" 
+import { Link, useNavigate } from "react-router-dom" 
+import type { Category } from "../components/types"
 import { TodoContext } from "../context/TodoContext"
-import { useContext, useState } from "react" 
-import calculateStats from "../utils/calculateStats"
+import { useContext, useState } from "react"
+import "../css/todo-detail.css" 
 
 type Props = {
-  inputText: string
-  categories: Category[]
-  categoryName: string
-  setSelectedCategoryId: (number: number) => void
-  setCategoryName: (name: string) => void
-  handleAddCategory: () => void
-  handleChangeDate: (number: number) => void
-  handleEditCategory: (id: number) => void
-  handleKeepCategory: (id: number, text: string) => void
+  handleAddTodo: (text: string) => void
 }
 
-function TodoDetailView({ inputText, categories, categoryName, setSelectedCategoryId, setCategoryName, handleEditCategory,
-   handleAddCategory, handleChangeDate, handleKeepCategory }: Props) {
+function TodoDetailView({ handleAddTodo }: Props) {
 
-    const todoContext = useContext(TodoContext)
-    if (!todoContext) return null
-
-    const { todos, today, selectedDate, error } = todoContext
-
-    const [editText, setEditText] = useState<string>("")
-
-    const {
-        getProgressByCategory
-    } = calculateStats(todos, today, selectedDate)
-
+  const todoContext = useContext(TodoContext)
+  if (!todoContext) return null
   
-    return (
-        <div className="detail">
-          <h2>カテゴリ</h2>
+  const { todos, categories, handleDeleteTodo, handleToggleTodo, handleUpdateTodo, handleToggleEdit } = todoContext
 
-          <div className="date-control">
-            <button onClick={() => handleChangeDate(-1)}>←</button>
-            <h3>{selectedDate}</h3>
-            <button onClick={() => handleChangeDate(1)}>→</button>
-          </div>
-          <div>
-            <input
-              value={categoryName}
-              autoFocus
-              placeholder={"カテゴリーを追加..."}
-              onChange={(e) => setCategoryName(e.target.value)}
-              onKeyDown={(e) => {
-                if(e.key === "Enter") {
-                  handleAddCategory()
-                }
-              }}
-            />
-            <button onClick={() => handleAddCategory()}>追加</button>
-          </div>
-          {error && <p>{error}</p>}
-          <div>
-            {categories.map((category: Category) => (
-              <div key={category.id}>
+  const navigate = useNavigate()
 
-               {category.isEditing ?
-               <div>
-                <input
-                  value={editText}
-                  autoFocus
-                  onChange={(e) => setEditText(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      handleKeepCategory(category.id, editText)
-                    }
-                  }}
-                />
+  const [title, setTitle] = useState<string>("")
+  const [memo, setMemo] = useState<string>("")
+  const [categoryId, setCategoryId] = useState<number>(1)
 
-               
-                <button onClick={() => {handleKeepCategory(category.id, editText)}}>
-                  保存
-                </button>
-              </div> : 
+  const handleSave = () => {
+    handleAddTodo(title)
+    navigate("/list")
+    setTitle("")
+  }
 
-              <div>
-                <Link to="/list">
-                  <button onClick={() => {setSelectedCategoryId(category.id)}}>
-                    <p>
-                      {category.name}
-                      {getProgressByCategory(category.id)}
-                      {getProgressByCategory(category.id) === "未開始" ? "" : "%"}
-                    </p>
-                  </button>
-                </Link>
-                  <button onClick={() => {handleEditCategory(category.id), setEditText(category.name)}}>編集</button>
-              </div>}
-            </div>
+  return (
+    <>
+      <div className="detail-page">
+
+        <div className="detail-header">
+
+          <Link to="/list">
+            <button>← 戻る</button>
+          </Link>
+
+          <h1>タスク詳細</h1>
+
+          {todos.map(todo => (
+            <button onClick={() => handleDeleteTodo(todo.id)}>
+              削除
+            </button>
           ))}
         </div>
 
-        <Link to="/stats">達成率一覧</Link>
+        <div className="detail-card">
+
+          <input
+            className="detail-title"
+            placeholder="タスク名"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSave()
+              }
+            }}
+          />
+
+          <select>
+            {categories.map(category => (
+              <option
+                key={category.id}
+                value={category.id}
+              >
+                {category.name}
+              </option>
+            ))}
+          </select>
+
+          <textarea
+            className="detail-memo"
+            placeholder="メモを入力"
+          />
+
+          <div className="detail-actions">
+
+            <Link to="/list">
+              <button onClick={handleSave}>
+                保存
+              </button>
+            </Link>
+
+            {todos.map(todo => (
+            <button onClick={() => handleToggleTodo(todo.id)}>
+              完了にする
+            </button>
+          ))}
+
+          </div>
+        </div>
+
       </div>
-    )
+    </>
+  )
 }
 
 export default TodoDetailView

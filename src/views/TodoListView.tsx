@@ -3,91 +3,143 @@ import type { Filter, Todo } from '../components/types'
 import { Link } from "react-router-dom" 
 import { TodoContext } from "../context/TodoContext"
 import { useContext } from "react" 
-import '../App.css'
+import '../css/todo-list.css'
 
 
 type Props = {
-  todoByCategory: Todo[]
+  filteredTodos: Todo[]
   selectedCategoryId: number | null
   searchText: string
-  inputText: string
   filter: Filter
-  loading: boolean
   setSearchText: (text: string) => void
-  setInputText: (text: string) => void
   setFilter: (filter: Filter) => void
-  handleAddTodo: () => void
+  handleChangeDate: (number: number) => void
 }
 
-function TodoListView({ todoByCategory, selectedCategoryId, searchText, inputText, filter, loading, setSearchText, 
-  setInputText, setFilter, handleAddTodo}: Props) {
+function TodoListView({ filteredTodos, selectedCategoryId, searchText, filter, setSearchText, 
+  setFilter, handleChangeDate}: Props) {
 
     const todoContext = useContext(TodoContext)
     if (!todoContext) return null
 
-    const { todos, error } = todoContext
+    const { todos, selectedDate } = todoContext
 
-  const todosInCategory = todos.map(todo => todo.categoryId === selectedCategoryId)
+  const todosInCategory = todos.filter(todo => todo.categoryId === selectedCategoryId)
 
   return (
     <>
-      <div className="body">
-        <input 
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)} 
-          placeholder="検索..."
-        />
+      <div className="app-layout">
 
-        <p>{todoByCategory.length === 0 ? "該当なし" : todoByCategory.length + "/" + todosInCategory.length + "件"}</p>
+        <aside className="sidebar">
+          <h2>TodoList</h2>
 
-        <input 
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)} 
-          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-            if (e.key === "Enter") {
-              handleAddTodo()
-            }
-          }}
-          placeholder="新しいタスクを入力..."
-        />
-        
-        <button onClick={handleAddTodo} disabled={inputText.trim() === ""}>
-          追加
-        </button>
+          <Link to="/list">
+            タスク一覧
+          </Link>
 
-        <div>
-          <button 
-            onClick={() => setFilter("all")}
-            className={filter === "all" ? "active-filter" : ""}>
+          <Link to="/stats">
+            統計
+          </Link>
+
+          <Link to="/categories">
+            カテゴリ
+          </Link>
+        </aside>
+
+        <main className="main-content">
+
+          <div className="page-header">
+            <div>
+              <h1>タスク一覧</h1>
+              <p>
+                今日やることを整理して効率的に進めましょう
+              </p>
+            </div>
+          </div>
+
+          <div className="todo-toolbar">
+
+            <button onClick={() => handleChangeDate(-1)}>
+              ←
+            </button>
+
+            <p>{selectedDate}</p>
+
+            <button onClick={() => handleChangeDate(1)}>
+              →
+            </button>
+
+            <input
+              className="search-input"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              placeholder="タスクを検索"
+            />
+
+            <button>
+              フィルター
+            </button>
+
+            <Link to="/tasks/new">
+              <button>
+                新しいタスク＋
+              </button>
+            </Link>
+
+          </div>
+
+          <div className="filter-tabs">
+
+            <button
+              className={filter === "all" ? "active-filter" : ""}
+              onClick={() => setFilter("all")}
+            >
               全て
-          </button>
-          <button 
-            onClick={() => setFilter("completed")}
-            className={filter === "completed" ? "active-filter" : ""}>
-              完了
-          </button>
-          <button 
-            onClick={() => setFilter("active")}
-            className={filter === "active" ? "active-filter" : ""}>
-              未完了
-          </button>
-        </div>
-        {loading && <p>ローディング中...</p>}
-        {error && <p>{error}</p>}
+            </button>
 
-        {todoByCategory.map(todo => 
-          <TodoItem 
-            key={todo.id} 
-            todo={todo} 
-            searchText={searchText}
-          />
-        )}
+            <button
+              className={filter === "completed" ? "active-filter" : ""}
+              onClick={() => setFilter("completed")}
+            >
+              完了
+            </button>
+
+            <button
+              className={filter === "active" ? "active-filter" : ""}
+              onClick={() => setFilter("active")}
+            >
+              未完了
+            </button>
+
+          </div>
+
+          <div className="todo-table">
+
+            <div className="table-header">
+              <div>タスク名</div>
+              <div>カテゴリ</div>
+              <div>ステータス</div>
+              <div>作成時間</div>
+              <div>操作</div>
+            </div>
+
+            <div className="todo-content">
+
+              {filteredTodos.map(todo => (
+                  <TodoItem 
+                    key={todo.id}
+                    todo={todo}
+                    searchText={searchText}
+                  />
+              ))}
+
+            </div>
+
+          </div>
+
+        </main>
         
       </div>
-
-      <Link to="/" >
-        <button>戻る</button>
-      </Link>
     </>
   )
 }

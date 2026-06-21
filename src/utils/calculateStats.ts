@@ -6,7 +6,7 @@ function calculateStats(todos: Todo[], today: string, selectedDate: string) {
     const todayAchievement = () => {
         const todayTodos = getTodosByDate(todos, today)
         if (todayTodos.length === 0) return 0
-        const completed = getCompletedTodos(todos).length
+        const completed = getCompletedTodos(todayTodos).length
 
         return Math.floor((completed / todayTodos.length) * 100)
     }

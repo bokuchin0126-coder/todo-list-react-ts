@@ -1,0 +1,132 @@
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.sidebar {
+  width: 240px;
+  background: white;
+  border-right: 1px solid #e5e7eb;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sidebar h2 {
+  margin: 0 0 16px;
+}
+
+.sidebar a {
+  text-decoration: none;
+  color: #374151;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.sidebar a:hover {
+  background: #f3f4f6;
+}
+
+.main-content {
+  flex: 1;
+  padding: 32px;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  font-size: 2rem;
+  margin: 0;
+  margin-bottom: 8px;
+}
+
+.page-header p {
+  color: #6b7280;
+}
+
+.todo-toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.search-input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+.todo-input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+.add-box {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.add-button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  cursor: pointer;
+}
+
+.add-button:hover {
+  opacity: 0.9;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.filter-tabs button {
+  padding: 10px 16px;
+  border: none;
+  background: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.active-filter {
+  background: #2563eb !important;
+  color: white;
+}
+
+.todo-table {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.table-header {
+  display: grid;
+  grid-template-columns: 1fr 120px 120px 220px 140px;
+  background: #f3f4f6;
+  padding: 16px 20px;
+  font-weight: bold;
+}
+
+.todo-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.todo-row {
+  width: 100%;
+}

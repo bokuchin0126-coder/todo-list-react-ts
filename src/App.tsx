@@ -9,7 +9,6 @@ import useCategory from './hooks/useCategories'
 import useInitializeApp from './hooks/useInitializeApp'
 import { TodoContext } from "./context/TodoContext"
 import type { Filter } from './components/types'
-import './App.css'
 
 
 function App() {
@@ -34,10 +33,8 @@ function App() {
     today,
     setTodos,
     currentTodos,
-    inputText,
     searchText,
     selectedCategoryId,
-    setInputText,
     setSearchText,
     setSelectedCategoryId,
     handleAddTodo,
@@ -78,6 +75,7 @@ function App() {
     <TodoContext.Provider
       value={{
         todos,
+        categories,
         today,
         error,
         selectedDate,
@@ -88,33 +86,28 @@ function App() {
       }}>
 
       <Routes>
-        <Route path="/" element={
+        <Route path="/tasks/new" element={
           <TodoDetailView
-            inputText={inputText}
-            categories={categories}
-            categoryName={categoryName}
-            setSelectedCategoryId={setSelectedCategoryId}
-            setCategoryName={setCategoryName}
-            handleAddCategory={handleAddCategory}
-            handleChangeDate={changeDate}
-            handleEditCategory={handleEditCategory}
-            handleKeepCategory={handleKeepCategory}
+            handleAddTodo={handleAddTodo}
+          />
+        } />
+
+        <Route path="/tasks/" element={
+          <TodoDetailView
+            handleAddTodo={handleAddTodo}
           />
         } />
   
         <Route path="/list" element={
           <div className="CategoryList">
             <TodoListView
-              todoByCategory={todoByCategory}
+              filteredTodos={filteredTodos}
               searchText={searchText}
-              inputText={inputText}
               selectedCategoryId={selectedCategoryId}
               filter={filter}
-              loading={loading}
               setSearchText={setSearchText}
-              setInputText={setInputText}
               setFilter={setFilter}
-              handleAddTodo={handleAddTodo}
+              handleChangeDate={changeDate}
             />
           </div>
         } />

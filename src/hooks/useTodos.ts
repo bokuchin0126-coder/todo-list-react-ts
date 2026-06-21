@@ -13,7 +13,6 @@ import {
 
 function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, errorTime: () => void ) {
     const [todos, setTodos] = useState<Todo[]>([])
-    const [inputText, setInputText] = useState<string>("")
     const [searchText, setSearchText] = useState<string>("")
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>(() => {
       const saved = localStorage.getItem("selectedCategoryId")
@@ -36,12 +35,12 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
       setSelectedDate(newDate)
     }
 
-    const handleAddTodo = async () => {
-    if (!inputText.trim()) return
+    const handleAddTodo = async (text: string) => {
+    if (!text.trim()) return
     
     setLoading(true)
     try {
-      const data = await createTodo(inputText, selectedCategoryId, selectedDate)
+      const data = await createTodo(text, selectedCategoryId, selectedDate)
 
       const insertedTodo: Todo = {
         id: data.id,
@@ -54,7 +53,6 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
       }
 
       setTodos(prev => [...prev, insertedTodo])
-      setInputText("")
     } catch (e) {
       setError("データの追加に失敗しました")
     } finally {
@@ -129,10 +127,8 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
         today,
         setTodos,
         currentTodos,
-        inputText,
         searchText,
         selectedCategoryId,
-        setInputText,
         setSearchText,
         setSelectedCategoryId,
         handleAddTodo,

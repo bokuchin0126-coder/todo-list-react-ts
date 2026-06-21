@@ -1,8 +1,9 @@
 import { createContext } from "react"
-import type { Todo } from "../components/types"
+import type { Todo, Category } from "../components/types"
 
 type TodoContextType = {
   todos: Todo[]
+  categories: Category[]
   today: string
   error: string | null
   selectedDate: string
