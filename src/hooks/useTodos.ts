@@ -4,6 +4,12 @@ import type { Todo } from "../components/types"
 import { supabase } from "../lib/supabase"
 import { getChangeDate } from "../utils/dateUtils"
 import { getTodosByDate } from "../utils/filterUtils"
+import {
+  createTodo,
+  deleteTodo,
+  updateTodoStatus,
+  updateTodoText
+} from "../api/todoApi"
 
 function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, errorTime: () => void ) {
     const [todos, setTodos] = useState<Todo[]>([])
@@ -35,25 +41,15 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
     
     setLoading(true)
     try {
-      const { data, error } = await supabase
-        .from("todos")
-        .insert([{
-          text: inputText,
-          status: "active",
-          category_id: selectedCategoryId,
-          todo_date: selectedDate
-        }])
-        .select()
-
-      if (error) throw error
+      const data = await createTodo(inputText, selectedCategoryId, selectedDate)
 
       const insertedTodo: Todo = {
-        id: data[0].id,
-        text: data[0].text,
+        id: data.id,
+        text: data.text,
         status: "active",
         isEditing: false,
         categoryId: selectedCategoryId,
-        createdAt: data[0].created_at,
+        createdAt: data.created_at,
         todoDate: selectedDate
       }
 
@@ -70,11 +66,8 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
   const handleDeleteTodo = async (id: number) => {
     setLoading(true)
     try {
-      const { error } = await supabase
-        .from("todos")
-        .delete()
-        .eq("id", id)
-      
+      await deleteTodo(id) 
+     
       setTodos(prev => prev.filter(todo => todo.id !== id))
     } catch (e) {
       setError("データの消去に失敗しました")
@@ -92,12 +85,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
     try {
       const newStatus = target.status === "completed" ? "active" : "completed"
 
-      const { error } = await supabase
-        .from("todos")
-        .update({
-          status: newStatus
-        })
-        .eq("id", id)
+      await updateTodoStatus(id, newStatus)
 
       setTodos(prev => prev.map(todo => (
         todo.id === id ? {...todo, status: todo.status === "completed" ? "active" : "completed"} : todo
@@ -122,11 +110,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
       if (!target) return
 
       try {
-        const { error } = await supabase
-          .from("todo")
-          .update({
-            text: newText
-          })
+        await updateTodoText(id, newText)
 
         setTodos(prev => prev.map(todo => (
           todo.id === id ? {...todo, text: newText} : todo

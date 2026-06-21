@@ -23,8 +23,8 @@ function TodoStatsView() {
         <>
         <div>
             <p>今日の達成率{todayAchievement()}%</p>
-            <p>過去７日間の達成率{designationAchievement(7)}</p>
-            <p>過去３０日間の達成率{designationAchievement(30)}</p>
+            <p>過去７日間の達成率{designationAchievement(7)}%</p>
+            <p>過去３０日間の達成率{designationAchievement(30)}%</p>
             <p>総達成率{wholeAchievement()}%</p>
             <p>連続達成日数{continuousAchievement()}日</p>
             <Link to="/">ホームへ戻る</Link>

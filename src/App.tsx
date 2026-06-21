@@ -48,7 +48,7 @@ function App() {
     changeDate
   } = todoState
 
-  const categoryState = useCategory(setError, setLoading, selectedDate, errorTime)
+  const categoryState = useCategory(setError, setLoading, errorTime)
   const {
     categories,
     setCategories,

@@ -2,6 +2,7 @@ import { useEffect } from "react"
 import type { Dispatch, SetStateAction } from 'react'
 import { supabase } from "../lib/supabase"
 import type { Todo, Filter, Category } from "../components/types"
+import { fetchTodos } from "../api/todoApi"
 
 
 function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, setCategories: Dispatch<SetStateAction<Category[]>>, filter: Filter, selectedCategoryId: number, 
@@ -13,11 +14,7 @@ function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, setCategor
       const fetch = async () => {
         try {
           setLoading(true)
-          const { data, error } = await supabase
-            .from("todos")
-            .select("*")
-
-          if (error) throw error
+          const data = await fetchTodos()
           setTodos(data.map(todo => ({
             id: todo.id,
             text: todo.text,

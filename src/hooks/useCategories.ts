@@ -2,9 +2,10 @@ import { useState } from "react"
 import type { Dispatch, SetStateAction } from 'react'
 import type { Todo, Category } from "../components/types"
 import { supabase } from "../lib/supabase"
+import { createCategory, keepCategory} from "../api/categoryApi"
 
 function useCategory(setError: Dispatch<SetStateAction<string | null>>, 
-    setLoading: Dispatch<SetStateAction<boolean>>, selectedDate: string, errorTime: () => void) {
+    setLoading: Dispatch<SetStateAction<boolean>>, errorTime: () => void) {
 
     
     const [categories, setCategories] = useState<Category[]>([])
@@ -15,20 +16,11 @@ function useCategory(setError: Dispatch<SetStateAction<string | null>>,
       
       try {
         setLoading(true)
-        const { data, error } = await supabase
-          .from("categories")
-          .insert({
-            name: categoryName
-          })
-          .select()
+        const data = await createCategory(categoryName)
 
-        if (error) {
-          console.log(error)
-          throw error
-        }
         setCategories(prev => [...prev, {
-          id: data[0].id,
-          name: data[0].name,
+          id: data.id,
+          name: data.name,
           isEditing: false
         }])
 
@@ -44,12 +36,7 @@ function useCategory(setError: Dispatch<SetStateAction<string | null>>,
     const handleKeepCategory = async (id: number, text: string) => {
       try {
         setLoading(true)
-        const { error } = await supabase
-          .from("categories")
-          .update({
-            name: text
-          })
-          .eq("id", id)
+        await keepCategory(id, text)
 
         setCategories(prev => prev.map(category => (
           category.id === id ? {...category, name: text, isEditing: false} : category

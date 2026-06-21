@@ -62,6 +62,7 @@ function TodoItem({ todo, searchText,  }: Props) {
                           if (tempText.trim() === "") return
                           handleUpdateTodo(todo.id, tempText)
                           handleToggleEdit(todo.id)
+                          setTempText(todo.text)
                       }
                     }}
                     />
@@ -80,7 +81,8 @@ function TodoItem({ todo, searchText,  }: Props) {
             <div className="right">
               <button onClick={() => {
                 if (todo.isEditing) {
-                handleUpdateTodo(todo.id, tempText)
+                handleUpdateTodo(todo.id, tempText),
+                setTempText(todo.text)
               }
               handleToggleEdit(todo.id)}}>
                   {todo.isEditing ? "保存" : "編集"}
