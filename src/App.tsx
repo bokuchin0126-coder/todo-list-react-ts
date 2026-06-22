@@ -40,7 +40,7 @@ function App() {
     handleAddTodo,
     handleToggleTodo,
     handleDeleteTodo,
-    handleToggleEdit,
+    handleEditTodo,
     handleUpdateTodo,
     changeDate
   } = todoState
@@ -80,7 +80,7 @@ function App() {
         error,
         selectedDate,
         handleDeleteTodo,
-        handleToggleEdit,
+        handleEditTodo,
         handleToggleTodo,
         handleUpdateTodo,
       }}>
@@ -92,7 +92,7 @@ function App() {
           />
         } />
 
-        <Route path="/tasks/" element={
+        <Route path="/tasks/:id" element={
           <TodoDetailView
             handleAddTodo={handleAddTodo}
           />

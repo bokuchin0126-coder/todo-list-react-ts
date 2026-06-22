@@ -1,11 +1,11 @@
-import { Link, useNavigate } from "react-router-dom" 
+import { Link, useNavigate, useParams } from "react-router-dom" 
 import type { Category } from "../components/types"
 import { TodoContext } from "../context/TodoContext"
-import { useContext, useState } from "react"
+import { useContext, useState, useEffect } from "react"
 import "../css/todo-detail.css" 
 
 type Props = {
-  handleAddTodo: (text: string) => void
+  handleAddTodo: (text: string, categoryId: number) => void
 }
 
 function TodoDetailView({ handleAddTodo }: Props) {
@@ -13,19 +13,53 @@ function TodoDetailView({ handleAddTodo }: Props) {
   const todoContext = useContext(TodoContext)
   if (!todoContext) return null
   
-  const { todos, categories, handleDeleteTodo, handleToggleTodo, handleUpdateTodo, handleToggleEdit } = todoContext
+  const { todos, categories, handleDeleteTodo, handleToggleTodo, handleUpdateTodo, handleEditTodo } = todoContext
 
   const navigate = useNavigate()
+  const { id } = useParams()
+  const isEditMode = id !== undefined
 
   const [title, setTitle] = useState<string>("")
   const [memo, setMemo] = useState<string>("")
-  const [categoryId, setCategoryId] = useState<number>(1)
+
+  const [categoryId, setCategoryId] = useState<number>(0)
+  const targetTodo = todos.find(todo => todo.id === Number(id)) 
+
 
   const handleSave = () => {
-    handleAddTodo(title)
+    if (categoryId === 0) {
+      alert("カテゴリを選択してください")
+      return
+    }
+    else if (isEditMode && targetTodo) {
+      handleUpdateTodo(targetTodo.id, title)
+      handleEditTodo(targetTodo.id)
+    }
+    else {
+      handleAddTodo(title, categoryId)
+      setTitle("")
+    }
     navigate("/list")
-    setTitle("")
   }
+
+  const editCancell = () => {
+    if (targetTodo) {
+      handleEditTodo(targetTodo.id)
+    }
+  }
+
+  useEffect(() => {
+    if (targetTodo) {
+      setTitle(targetTodo.text)
+    }
+  }, [targetTodo])
+
+  useEffect(() => {
+    if (targetTodo) {
+      setTitle(targetTodo.text)
+      setCategoryId(targetTodo.categoryId)
+    }
+  }, [targetTodo])
 
   return (
     <>
@@ -34,16 +68,20 @@ function TodoDetailView({ handleAddTodo }: Props) {
         <div className="detail-header">
 
           <Link to="/list">
-            <button>← 戻る</button>
+            <button onClick={() => editCancell()}>← 戻る</button>
           </Link>
 
-          <h1>タスク詳細</h1>
+          <h1>
+            {isEditMode ? "タスク編集" : "新しいタスク"}
+          </h1>
 
-          {todos.map(todo => (
-            <button onClick={() => handleDeleteTodo(todo.id)}>
+          {isEditMode && targetTodo && (
+            <button
+              onClick={() => handleDeleteTodo(targetTodo.id)}
+            >
               削除
             </button>
-          ))}
+          )}
         </div>
 
         <div className="detail-card">
@@ -60,7 +98,16 @@ function TodoDetailView({ handleAddTodo }: Props) {
             }}
           />
 
-          <select>
+          <select
+            value={categoryId}
+            onChange={(e) => setCategoryId(Number(e.target.value))}
+          >
+            {!isEditMode && (
+              <option value="">
+                カテゴリを選択
+              </option>
+            )}
+
             {categories.map(category => (
               <option
                 key={category.id}
@@ -69,7 +116,10 @@ function TodoDetailView({ handleAddTodo }: Props) {
                 {category.name}
               </option>
             ))}
+           
           </select>
+
+          <p>{categoryId}</p>
 
           <textarea
             className="detail-memo"
@@ -80,15 +130,17 @@ function TodoDetailView({ handleAddTodo }: Props) {
 
             <Link to="/list">
               <button onClick={handleSave}>
-                保存
+                {isEditMode ? "更新" : "保存"}
               </button>
             </Link>
 
-            {todos.map(todo => (
-            <button onClick={() => handleToggleTodo(todo.id)}>
-              完了にする
-            </button>
-          ))}
+            {isEditMode && targetTodo && (
+              <button
+                onClick={() => handleToggleTodo(targetTodo.id)}
+              >
+                {targetTodo.status === "completed" ? "未完了にする" : "完了にする"}
+              </button>
+            )}
 
           </div>
         </div>

@@ -35,19 +35,19 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
       setSelectedDate(newDate)
     }
 
-    const handleAddTodo = async (text: string) => {
+    const handleAddTodo = async (text: string, categoryId: number) => {
     if (!text.trim()) return
     
     setLoading(true)
     try {
-      const data = await createTodo(text, selectedCategoryId, selectedDate)
+      const data = await createTodo(text, categoryId, selectedDate)
 
       const insertedTodo: Todo = {
         id: data.id,
         text: data.text,
         status: "active",
         isEditing: false,
-        categoryId: selectedCategoryId,
+        categoryId: data.category_id,
         createdAt: data.created_at,
         todoDate: selectedDate
       }
@@ -96,7 +96,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
     }
   }
   
-    const handleToggleEdit = (id: number) => {
+    const handleEditTodo = (id: number) => {
       setTodos(prev => prev.map(todo => (
         todo.id == id ? {...todo, isEditing: !todo.isEditing} : todo
       )))
@@ -134,7 +134,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
         handleAddTodo,
         handleToggleTodo,
         handleDeleteTodo,
-        handleToggleEdit,
+        handleEditTodo,
         handleUpdateTodo,
         changeDate
     }

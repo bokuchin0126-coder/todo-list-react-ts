@@ -3,7 +3,7 @@ export type Todo = {
     text: string
     status: "active" | "completed"
     isEditing: boolean
-    categoryId: number | null
+    categoryId: number
     createdAt: string
     todoDate: string
 }

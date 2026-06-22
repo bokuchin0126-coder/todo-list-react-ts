@@ -2,13 +2,13 @@ import type { Todo } from "../components/types"
 import { supabase } from "../lib/supabase"
 
 
-export async function createTodo(text: string, selectedCategoryId: number, selectedDate: string) {
+export async function createTodo(text: string, categoryId: number, selectedDate: string) {
     const { data, error } = await supabase
       .from("todos")
       .insert({
         text: text,
         status: "active",
-        category_id: selectedCategoryId,
+        category_id: categoryId,
         todo_date: selectedDate
       })
       .select()

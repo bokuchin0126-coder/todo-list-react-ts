@@ -15,11 +15,13 @@ function TodoItem({ todo, searchText }: Props) {
   const todoContext = useContext(TodoContext)
   if (!todoContext) return null
   
-  const { categories, handleDeleteTodo, handleToggleTodo, handleUpdateTodo, handleToggleEdit } = todoContext
+  const { categories, handleDeleteTodo, handleToggleTodo, handleUpdateTodo, handleEditTodo } = todoContext
 
   const [tempText, setTempText] = useState<string>(todo.text)
   const divRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
+
+  const categoryName = categories.find(category => category.id === todo.categoryId)
 
   useEffect(() => {
   if (todo.isEditing) {
@@ -33,7 +35,7 @@ function TodoItem({ todo, searchText }: Props) {
     const handleClickOutside = (e: MouseEvent) => {
         if (divRef.current && !divRef.current.contains(e.target as Node)) {
           setTempText(todo.text)
-          handleToggleEdit(todo.id)
+          handleEditTodo(todo.id)
         }
     }
     document.addEventListener("click", handleClickOutside)
@@ -64,12 +66,12 @@ function TodoItem({ todo, searchText }: Props) {
                     onKeyDown={(e) => {
                       if (e.key === "Escape") {
                           setTempText(todo.text)
-                          handleToggleEdit(todo.id)
+                          handleEditTodo(todo.id)
                       }
                       if (e.key === "Enter") {
                           if (tempText.trim() === "") return
                           handleUpdateTodo(todo.id, tempText)
-                          handleToggleEdit(todo.id)
+                          handleEditTodo(todo.id)
                           setTempText(todo.text)
                       }
                     }}
@@ -97,11 +99,9 @@ function TodoItem({ todo, searchText }: Props) {
             </div>
 
             <div className="category-cell">
-              {categories.map(category => (
-              <p>
-                {category.name}
-              </p>
-            ))}
+
+              <p>{categoryName?.name}</p>
+
             </div>
 
             <div className="status-cell">
@@ -118,7 +118,7 @@ function TodoItem({ todo, searchText }: Props) {
 
             <div className="action-cell">
 
-              <Link to={`/detail/${todo.id}`}>
+              <Link to={`/tasks/${todo.id}`}>
                 <button 
                   className="edit-button"
                   onClick={() => {
@@ -127,7 +127,7 @@ function TodoItem({ todo, searchText }: Props) {
                       setTempText(todo.text)
                     }
 
-                    handleToggleEdit(todo.id)
+                    handleEditTodo(todo.id)
                   }}
                 >
                   編集

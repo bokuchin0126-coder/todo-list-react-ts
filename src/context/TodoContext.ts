@@ -9,7 +9,7 @@ type TodoContextType = {
   selectedDate: string
   handleDeleteTodo: (id: number) => void
   handleToggleTodo: (id: number) => void
-  handleToggleEdit: (id: number) => void
+  handleEditTodo: (id: number) => void
   handleUpdateTodo: (id: number, text: string) => void
 }
 
