@@ -1,0 +1,58 @@
+.category-page{
+  max-width:800px;
+  margin:0 auto;
+  padding:20px;
+}
+
+.category-page h1{
+  margin-bottom:20px;
+}
+
+.category-add{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.category-add input{
+  flex:1;
+  padding:10px;
+  border:1px solid #ccc;
+  border-radius:8px;
+}
+
+.category-add button{
+  padding:10px 20px;
+}
+
+.category-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.category-card{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:15px;
+
+  border:1px solid #ddd;
+  border-radius:10px;
+
+  background:white;
+}
+
+.category-card button{
+  padding:8px 14px;
+}
+
+.category-card input{
+  width:100%;
+
+  padding:8px;
+
+  border:1px solid #ccc;
+  border-radius:6px;
+}

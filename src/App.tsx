@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { supabase } from "./lib/supabase"
-import { Routes, Route } from "react-router-dom" 
+import { Routes, Route, Navigate } from "react-router-dom" 
 import  TodoListView  from './views/TodoListView'
 import  TodoDetailView  from './views/TodoDetailView'
 import  TodoStatsView from './views/TodoStatsView'
+import TodoCategoryView from "./views/TodoCategoryView"
 import useTodo from './hooks/useTodos'
 import useCategory from './hooks/useCategories'
 import useInitializeApp from './hooks/useInitializeApp'
@@ -86,6 +87,8 @@ function App() {
       }}>
 
       <Routes>
+        <Route path="/" element={<Navigate to="/tasks" replace />} />
+
         <Route path="/tasks/new" element={
           <TodoDetailView
             handleAddTodo={handleAddTodo}
@@ -98,7 +101,7 @@ function App() {
           />
         } />
   
-        <Route path="/list" element={
+        <Route path="/tasks" element={
           <div className="CategoryList">
             <TodoListView
               filteredTodos={filteredTodos}
@@ -112,10 +115,22 @@ function App() {
           </div>
         } />
 
-        <Route path="/stats" element={
+        <Route path="/tasks/stats" element={
           <TodoStatsView />
         } />
+
+        <Route path="/tasks/categories" element={
+          <TodoCategoryView 
+            categoryName={categoryName}
+            setCategoryName={setCategoryName}
+            handleAddCategory={handleAddCategory}
+            handleEditCategory={handleEditCategory}
+            handleKeepCategory={handleKeepCategory}
+          />
+        } />
+
       </Routes>
+
     </TodoContext.Provider>
     </>
   )

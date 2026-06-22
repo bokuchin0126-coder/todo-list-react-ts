@@ -41,6 +41,7 @@ function useCategory(setError: Dispatch<SetStateAction<string | null>>,
         setCategories(prev => prev.map(category => (
           category.id === id ? {...category, name: text, isEditing: false} : category
         )))
+
       } catch {
         setError("保存に失敗しました")
       } finally {
@@ -51,9 +52,13 @@ function useCategory(setError: Dispatch<SetStateAction<string | null>>,
    
     const handleEditCategory = (id: number) => {
       try {
+        const isEditing = categories.filter(category => category.isEditing)
+        if (isEditing.length > 0) return
+
         setCategories(prev => prev.map(category => (
           category.id === id ? {...category, isEditing: true} : category
         )))
+
       } catch {
         setError("編集に失敗しました")
       } finally {

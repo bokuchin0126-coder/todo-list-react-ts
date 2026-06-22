@@ -39,7 +39,7 @@ function TodoDetailView({ handleAddTodo }: Props) {
       handleAddTodo(title, categoryId)
       setTitle("")
     }
-    navigate("/list")
+    navigate("/tasks")
   }
 
   const editCancell = () => {
@@ -67,7 +67,7 @@ function TodoDetailView({ handleAddTodo }: Props) {
 
         <div className="detail-header">
 
-          <Link to="/list">
+          <Link to="/tasks">
             <button onClick={() => editCancell()}>← 戻る</button>
           </Link>
 
