@@ -21,13 +21,33 @@ function TodoStatsView() {
 
     return (
         <>
-        <div>
-            <p>今日の達成率{todayAchievement()}%</p>
-            <p>過去７日間の達成率{designationAchievement(7)}%</p>
-            <p>過去３０日間の達成率{designationAchievement(30)}%</p>
-            <p>総達成率{wholeAchievement()}%</p>
-            <p>連続達成日数{continuousAchievement()}日</p>
-            <Link to="/">ホームへ戻る</Link>
+        <div className="stats-grid">
+
+            <div className="stats-card">
+                <h3>今日の達成率</h3>
+                <p>{todayAchievement()}%</p>
+            </div>
+
+            <div className="stats-card">
+                <h3>過去７日間</h3>
+                <p>{designationAchievement(7)}%</p>
+            </div>
+
+             <div className="stats-card">
+                <h3>過去３０日間</h3>
+                <p>{designationAchievement(30)}%</p>
+            </div>
+
+             <div className="stats-card">
+                <h3>総達成率</h3>
+                <p>{wholeAchievement()}%</p>
+            </div>
+
+             <div className="stats-card">
+                <h3>連続達成日数</h3>
+                <p>{continuousAchievement()}日</p>
+            </div>
+            
         </div>
         </>
     )

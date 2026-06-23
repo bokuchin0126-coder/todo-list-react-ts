@@ -48,6 +48,7 @@
   padding: 12px 20px;
   border: none;
   border-radius: 8px;
+
   background: #2563eb;
   color: white;
   cursor: pointer;
@@ -67,6 +68,7 @@
   padding: 10px 16px;
   border: none;
   background: white;
+
   border-radius: 8px;
   cursor: pointer;
 }
@@ -87,6 +89,7 @@
   display: grid;
   grid-template-columns: 1fr 120px 120px 220px 140px;
   background: #f3f4f6;
+  
   padding: 16px 20px;
   font-weight: bold;
 }
