@@ -28,26 +28,6 @@ function TodoListView({ filteredTodos, selectedCategoryId, searchText, filter, s
 
   return (
     <>
-      <div className="app-layout">
-
-        <aside className="sidebar">
-          <h2>TodoList</h2>
-
-          <Link to="/tasks">
-            タスク一覧
-          </Link>
-
-          <Link to="/tasks/stats">
-            統計
-          </Link>
-
-          <Link to="/tasks/categories">
-            カテゴリ
-          </Link>
-        </aside>
-
-        <main className="main-content">
-
           <div className="page-header">
             <div>
               <h1>タスク一覧</h1>
@@ -136,10 +116,6 @@ function TodoListView({ filteredTodos, selectedCategoryId, searchText, filter, s
             </div>
 
           </div>
-
-        </main>
-        
-      </div>
     </>
   )
 }

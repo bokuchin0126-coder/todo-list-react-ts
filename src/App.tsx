@@ -5,6 +5,7 @@ import  TodoListView  from './views/TodoListView'
 import  TodoDetailView  from './views/TodoDetailView'
 import  TodoStatsView from './views/TodoStatsView'
 import TodoCategoryView from "./views/TodoCategoryView"
+import Layout from "./views/Layout"
 import useTodo from './hooks/useTodos'
 import useCategory from './hooks/useCategories'
 import useInitializeApp from './hooks/useInitializeApp'
@@ -89,45 +90,49 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/tasks" replace />} />
 
-        <Route path="/tasks/new" element={
-          <TodoDetailView
-            handleAddTodo={handleAddTodo}
-          />
-        } />
+        <Route element={<Layout />}>
 
-        <Route path="/tasks/:id" element={
-          <TodoDetailView
-            handleAddTodo={handleAddTodo}
-          />
-        } />
-  
-        <Route path="/tasks" element={
-          <div className="CategoryList">
-            <TodoListView
-              filteredTodos={filteredTodos}
-              searchText={searchText}
-              selectedCategoryId={selectedCategoryId}
-              filter={filter}
-              setSearchText={setSearchText}
-              setFilter={setFilter}
-              handleChangeDate={changeDate}
+          <Route path="/tasks/new" element={
+            <TodoDetailView
+              handleAddTodo={handleAddTodo}
             />
-          </div>
-        } />
+          } />
 
-        <Route path="/tasks/stats" element={
-          <TodoStatsView />
-        } />
-
-        <Route path="/tasks/categories" element={
-          <TodoCategoryView 
-            categoryName={categoryName}
-            setCategoryName={setCategoryName}
-            handleAddCategory={handleAddCategory}
-            handleEditCategory={handleEditCategory}
-            handleKeepCategory={handleKeepCategory}
-          />
-        } />
+          <Route path="/tasks/:id" element={
+            <TodoDetailView
+              handleAddTodo={handleAddTodo}
+            />
+          } />
+  
+          <Route path="/tasks" element={
+            <div className="CategoryList">
+              <TodoListView
+                filteredTodos={filteredTodos}
+                searchText={searchText}
+                selectedCategoryId={selectedCategoryId}
+                filter={filter}
+                setSearchText={setSearchText}
+                setFilter={setFilter}
+                handleChangeDate={changeDate}
+              />
+            </div>
+          } />
+  
+          <Route path="/tasks/stats" element={
+            <TodoStatsView />
+          } />
+  
+          <Route path="/tasks/categories" element={
+            <TodoCategoryView 
+              categoryName={categoryName}
+              setCategoryName={setCategoryName}
+              handleAddCategory={handleAddCategory}
+              handleEditCategory={handleEditCategory}
+              handleKeepCategory={handleKeepCategory}
+            />
+          } />
+  
+        </Route>
 
       </Routes>
 
