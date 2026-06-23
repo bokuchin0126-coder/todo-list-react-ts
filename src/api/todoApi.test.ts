@@ -5,6 +5,7 @@ import {
     deleteTodo,
     updateTodoStatus,
     updateTodoText,
+    updateTodoMemo,
     fetchTodos
 } from "./todoApi"
 
@@ -54,12 +55,13 @@ describe("createTodo", () => {
     })
 
     test("creates todo and returns created todo", async () => {
-        await createTodo("勉強", 5, "2026-06-01")
+        await createTodo("勉強", "UI整理とメモ機能の追加", 5, "2026-06-01")
 
         expect(mocks.fromMock).toHaveBeenCalledWith("todos")
         expect(mocks.insertMock).toHaveBeenCalledWith({
             text: "勉強",
             status: "active",
+            memo: "UI整理とメモ機能の追加",
             category_id: 5,
             todo_date: "2026-06-01"
         })
@@ -117,6 +119,27 @@ describe("updateTodoText", () => {
         })
         expect(mocks.eqMock).toHaveBeenCalledWith("id", 5)
     })
+})
+
+describe("updateTodoMemo", () => {
+
+    beforeEach(() => (
+        mocks.fromMock.mockReturnValue({
+            update: mocks.updateMock
+        })
+    ))
+
+    test("updates todo memo by id", async () => {
+        await updateTodoMemo(5, "メモ内容を修正")
+
+        expect(mocks.fromMock).toHaveBeenCalledWith("todos")
+        expect(mocks.updateMock).toHaveBeenCalledWith({
+            memo: "メモ内容を修正"
+        })
+        expect(mocks.eqMock).toHaveBeenCalledWith("id", 5)
+    })
+
+
 })
 
 describe("fetchTodos", () => {

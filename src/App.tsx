@@ -43,7 +43,8 @@ function App() {
     handleToggleTodo,
     handleDeleteTodo,
     handleEditTodo,
-    handleUpdateTodo,
+    handleUpdateTextTodo,
+    handleUpdateMemoTodo,
     changeDate
   } = todoState
 
@@ -84,7 +85,8 @@ function App() {
         handleDeleteTodo,
         handleEditTodo,
         handleToggleTodo,
-        handleUpdateTodo,
+        handleUpdateTextTodo,
+        handleUpdateMemoTodo
       }}>
 
       <Routes>

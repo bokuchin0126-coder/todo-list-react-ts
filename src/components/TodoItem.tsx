@@ -15,7 +15,7 @@ function TodoItem({ todo, searchText }: Props) {
   const todoContext = useContext(TodoContext)
   if (!todoContext) return null
   
-  const { categories, handleDeleteTodo, handleToggleTodo, handleUpdateTodo, handleEditTodo } = todoContext
+  const { categories, handleDeleteTodo, handleToggleTodo, handleUpdateTextTodo, handleEditTodo } = todoContext
 
   const [tempText, setTempText] = useState<string>(todo.text)
   const divRef = useRef<HTMLDivElement>(null)
@@ -70,7 +70,7 @@ function TodoItem({ todo, searchText }: Props) {
                       }
                       if (e.key === "Enter") {
                           if (tempText.trim() === "") return
-                          handleUpdateTodo(todo.id, tempText)
+                          handleUpdateTextTodo(todo.id, tempText)
                           handleEditTodo(todo.id)
                           setTempText(todo.text)
                       }
@@ -113,7 +113,7 @@ function TodoItem({ todo, searchText }: Props) {
             </div>
 
             <div className="time-cell">
-                {todo.createdAt}
+                {new Date(todo.createdAt).toLocaleString("ja-JP")}
             </div>
 
             <div className="action-cell">
@@ -123,7 +123,7 @@ function TodoItem({ todo, searchText }: Props) {
                   className="edit-button"
                   onClick={() => {
                     if (todo.isEditing) {
-                      handleUpdateTodo(todo.id, tempText),
+                      handleUpdateTextTodo(todo.id, tempText),
                       setTempText(todo.text)
                     }
 
@@ -134,12 +134,20 @@ function TodoItem({ todo, searchText }: Props) {
                 </button>
               </Link>
 
-              <button
-                className="delete-button"
-                onClick={() => handleDeleteTodo(todo.id)}
-              >
-                削除
-              </button>
+              <Link to="/tasts">
+                <button
+                  className="delete-button"
+                  onClick={() => {
+                    const isDelete = window.confirm("本当に削除しますか？")
+
+                    if (isDelete) {
+                      handleDeleteTodo(todo.id)
+                    }
+                  }}
+                >
+                  削除
+                </button>
+              </Link>
 
             </div>
 

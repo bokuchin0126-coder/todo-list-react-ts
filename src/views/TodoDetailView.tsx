@@ -5,7 +5,7 @@ import { useContext, useState, useEffect } from "react"
 import "../css/todo-detail.css" 
 
 type Props = {
-  handleAddTodo: (text: string, categoryId: number) => void
+  handleAddTodo: (text: string, memo: string, categoryId: number) => void
 }
 
 function TodoDetailView({ handleAddTodo }: Props) {
@@ -13,7 +13,8 @@ function TodoDetailView({ handleAddTodo }: Props) {
   const todoContext = useContext(TodoContext)
   if (!todoContext) return null
   
-  const { todos, categories, handleDeleteTodo, handleToggleTodo, handleUpdateTodo, handleEditTodo } = todoContext
+  const { todos, categories, handleDeleteTodo, handleToggleTodo, handleUpdateTextTodo,
+     handleEditTodo, handleUpdateMemoTodo } = todoContext
 
   const navigate = useNavigate()
   const { id } = useParams()
@@ -32,11 +33,12 @@ function TodoDetailView({ handleAddTodo }: Props) {
       return
     }
     else if (isEditMode && targetTodo) {
-      handleUpdateTodo(targetTodo.id, title)
+      handleUpdateTextTodo(targetTodo.id, title)
+      handleUpdateMemoTodo(targetTodo.id, memo)
       handleEditTodo(targetTodo.id)
     }
     else {
-      handleAddTodo(title, categoryId)
+      handleAddTodo(title, memo, categoryId)
       setTitle("")
     }
     navigate("/tasks")
@@ -51,12 +53,7 @@ function TodoDetailView({ handleAddTodo }: Props) {
   useEffect(() => {
     if (targetTodo) {
       setTitle(targetTodo.text)
-    }
-  }, [targetTodo])
-
-  useEffect(() => {
-    if (targetTodo) {
-      setTitle(targetTodo.text)
+      setMemo(targetTodo.memo)
       setCategoryId(targetTodo.categoryId)
     }
   }, [targetTodo])
@@ -76,12 +73,21 @@ function TodoDetailView({ handleAddTodo }: Props) {
           </h1>
 
           {isEditMode && targetTodo && (
-            <button
-              onClick={() => handleDeleteTodo(targetTodo.id)}
-            >
-              削除
-            </button>
+            <Link to="tasks">
+              <button
+                onClick={() => {
+                  const isDelete = window.confirm("本当に削除しますか？")
+
+                  if (isDelete) {
+                    handleDeleteTodo(targetTodo.id)
+                  }
+                }}
+              >
+                削除
+              </button>
+            </Link>
           )}
+          
         </div>
 
         <div className="detail-card">
@@ -119,16 +125,21 @@ function TodoDetailView({ handleAddTodo }: Props) {
            
           </select>
 
-          <p>{categoryId}</p>
-
           <textarea
             className="detail-memo"
             placeholder="メモを入力"
+            value={memo}
+            onChange={(e) => setMemo(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSave()
+              }
+            }}
           />
 
           <div className="detail-actions">
 
-            <Link to="/list">
+            <Link to="/tasks">
               <button onClick={handleSave}>
                 {isEditMode ? "更新" : "保存"}
               </button>

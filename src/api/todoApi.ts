@@ -2,12 +2,13 @@ import type { Todo } from "../components/types"
 import { supabase } from "../lib/supabase"
 
 
-export async function createTodo(text: string, categoryId: number, selectedDate: string) {
+export async function createTodo(text: string, memo: string, categoryId: number, selectedDate: string) {
     const { data, error } = await supabase
       .from("todos")
       .insert({
         text: text,
         status: "active",
+        memo: memo,
         category_id: categoryId,
         todo_date: selectedDate
       })
@@ -45,6 +46,17 @@ export async function updateTodoText(id: number, newText: string) {
             text: newText
         })
         .eq("id", id)
+
+    if (error) throw error
+}
+
+export async function updateTodoMemo(id: number, memo: string) {
+    const { error } = await supabase
+      .from("todos")
+      .update({
+        memo: memo
+      })
+      .eq("id", id)
 
     if (error) throw error
 }

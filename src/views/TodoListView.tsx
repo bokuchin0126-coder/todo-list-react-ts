@@ -24,7 +24,6 @@ function TodoListView({ filteredTodos, selectedCategoryId, searchText, filter, s
 
     const { todos, selectedDate } = todoContext
 
-  const todosInCategory = todos.filter(todo => todo.categoryId === selectedCategoryId)
 
   return (
     <>

@@ -8,6 +8,7 @@ import {
   createTodo,
   deleteTodo,
   updateTodoStatus,
+  updateTodoMemo,
   updateTodoText
 } from "../api/todoApi"
 
@@ -35,17 +36,18 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
       setSelectedDate(newDate)
     }
 
-    const handleAddTodo = async (text: string, categoryId: number) => {
+    const handleAddTodo = async (text: string, memo: string, categoryId: number) => {
     if (!text.trim()) return
     
     setLoading(true)
     try {
-      const data = await createTodo(text, categoryId, selectedDate)
+      const data = await createTodo(text, memo, categoryId, selectedDate)
 
       const insertedTodo: Todo = {
         id: data.id,
         text: data.text,
         status: "active",
+        memo: memo,
         isEditing: false,
         categoryId: data.category_id,
         createdAt: data.created_at,
@@ -102,16 +104,35 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
       )))
     }
   
-    const handleUpdateTodo = async (id: number, newText: string) => {
-      setLoading(true)
+    const handleUpdateTextTodo = async (id: number, newText: string) => {
       const target = currentTodos.find(todo => todo.id === id)
       if (!target) return
 
       try {
+        setLoading(true)
         await updateTodoText(id, newText)
 
         setTodos(prev => prev.map(todo => (
           todo.id === id ? {...todo, text: newText} : todo
+        )))
+      } catch {
+        setError("編集に失敗しました")
+      } finally {
+        setLoading(false)
+        errorTime()
+      }
+    }
+
+    const handleUpdateMemoTodo = async (id: number, memo: string) => {
+      const target = currentTodos.find(todo => todo.id === id)
+      if (!target) return
+
+      try {
+        setLoading(true)
+        await updateTodoMemo(id, memo)
+
+        setTodos(prev => prev.map(todo => (
+          todo.id === id ? {...todo, memo: memo} : todo
         )))
       } catch {
         setError("編集に失敗しました")
@@ -135,7 +156,8 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
         handleToggleTodo,
         handleDeleteTodo,
         handleEditTodo,
-        handleUpdateTodo,
+        handleUpdateTextTodo,
+        handleUpdateMemoTodo,
         changeDate
     }
 }
