@@ -56,45 +56,22 @@ function TodoItem({ todo, searchText }: Props) {
               >
                 {todo.status === "active" ? "□" : "✓"}
               </button>
-              
-              {todo.isEditing ? (
 
-                  <input
-                    value={tempText}
-                    autoFocus
-                    onChange={(e) => setTempText(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Escape") {
-                          setTempText(todo.text)
-                          handleEditTodo(todo.id)
-                      }
-                      if (e.key === "Enter") {
-                          if (tempText.trim() === "") return
-                          handleUpdateTextTodo(todo.id, tempText)
-                          handleEditTodo(todo.id)
-                          setTempText(todo.text)
-                      }
-                    }}
-                  />
+              <span 
+                className=
+                  {todo.status === "completed"
+                    ? "completed" 
+                    : ""}
+              >
+                {searchText ? todo.text.split(searchText).map((part, i, arr) => (
 
-              ) : (
-
-                  <span 
-                    className=
-                      {todo.status === "completed"
-                        ? "completed" 
-                        : ""}
-                  >
-                    {searchText ? todo.text.split(searchText).map((part, i, arr) => (
-
-                        <span key={i}>
-                            {part}
-                            {i < arr.length - 1 && <mark>{searchText}</mark>}
-                        </span>
-
-                      )) : todo.text}
+                  <span key={i}>
+                    {part}
+                    {i < arr.length - 1 && <mark>{searchText}</mark>}
                   </span>
-              )}
+
+                )) : todo.text}
+              </span>
 
             </div>
 
@@ -122,15 +99,10 @@ function TodoItem({ todo, searchText }: Props) {
                 <button 
                   className="edit-button"
                   onClick={() => {
-                    if (todo.isEditing) {
-                      handleUpdateTextTodo(todo.id, tempText),
-                      setTempText(todo.text)
-                    }
-
                     handleEditTodo(todo.id)
                   }}
                 >
-                  編集
+                  詳細
                 </button>
               </Link>
 

@@ -18,10 +18,11 @@ function TodoDetailView({ handleAddTodo }: Props) {
 
   const navigate = useNavigate()
   const { id } = useParams()
-  const isEditMode = id !== undefined
+  const isDetailMode = id !== undefined
 
   const [title, setTitle] = useState<string>("")
   const [memo, setMemo] = useState<string>("")
+  const [isEditMode, setIsEditMode] = useState<boolean>(false)
 
   const [categoryId, setCategoryId] = useState<number>(0)
   const targetTodo = todos.find(todo => todo.id === Number(id)) 
@@ -32,16 +33,21 @@ function TodoDetailView({ handleAddTodo }: Props) {
       alert("カテゴリを選択してください")
       return
     }
-    else if (isEditMode && targetTodo) {
+    else if (isDetailMode && isEditMode && targetTodo) {
       handleUpdateTextTodo(targetTodo.id, title)
       handleUpdateMemoTodo(targetTodo.id, memo)
       handleEditTodo(targetTodo.id)
+      setIsEditMode(false)
+    }
+    else if (isDetailMode && !isEditMode && targetTodo) {
+      setIsEditMode(true)
     }
     else {
       handleAddTodo(title, memo, categoryId)
       setTitle("")
+      navigate("/tasks")
     }
-    navigate("/tasks")
+    
   }
 
   const editCancell = () => {
@@ -69,10 +75,10 @@ function TodoDetailView({ handleAddTodo }: Props) {
           </Link>
 
           <h1>
-            {isEditMode ? "タスク編集" : "新しいタスク"}
+            {isDetailMode ? "タスク詳細" : "新しいタスク"}
           </h1>
 
-          {isEditMode && targetTodo && (
+          {isDetailMode && targetTodo && (
             <Link to="tasks">
               <button
                 onClick={() => {
@@ -91,11 +97,12 @@ function TodoDetailView({ handleAddTodo }: Props) {
         </div>
 
         <div className="detail-card">
-
+          
           <input
             className="detail-title"
             placeholder="タスク名"
             value={title}
+            readOnly={!isEditMode}
             onChange={(e) => setTitle(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -106,9 +113,10 @@ function TodoDetailView({ handleAddTodo }: Props) {
 
           <select
             value={categoryId}
+            disabled={!isEditMode}
             onChange={(e) => setCategoryId(Number(e.target.value))}
           >
-            {!isEditMode && (
+            {!isDetailMode && (
               <option value="">
                 カテゴリを選択
               </option>
@@ -128,24 +136,26 @@ function TodoDetailView({ handleAddTodo }: Props) {
           <textarea
             className="detail-memo"
             placeholder="メモを入力"
+            readOnly={!isEditMode}
             value={memo}
             onChange={(e) => setMemo(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSave()
-              }
-            }}
           />
 
           <div className="detail-actions">
 
-            <Link to="/tasks">
+            {isDetailMode ? 
               <button onClick={handleSave}>
-                {isEditMode ? "更新" : "保存"}
+                {isEditMode ? "更新" : "編集"}
               </button>
-            </Link>
+            :
+              <Link to="/tasks">
+                <button onClick={handleSave}>
+                  保存
+                </button>
+              </Link>
+            }
 
-            {isEditMode && targetTodo && (
+            {isDetailMode && isEditMode && targetTodo && (
               <button
                 onClick={() => handleToggleTodo(targetTodo.id)}
               >
