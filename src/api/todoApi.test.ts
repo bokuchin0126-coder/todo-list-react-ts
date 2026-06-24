@@ -19,11 +19,14 @@ const mocks = vi.hoisted(() => {
         select: selectMock
     }))
 
-    const eqMock = vi.fn().mockResolvedValue({
+    const deleteEqMock = vi.fn().mockResolvedValue({
         error: null
     })
+    const eqMock = vi.fn(() => ({
+        select: selectMock
+    }))
     const deleteMock = vi.fn(() => ({
-        eq: eqMock
+        eq: deleteEqMock
     }))
     const updateMock = vi.fn(() => ({
         eq: eqMock
@@ -34,6 +37,7 @@ const mocks = vi.hoisted(() => {
     return {
         selectMock,
         insertMock,
+        deleteEqMock,
         eqMock,
         deleteMock,
         updateMock,
@@ -81,12 +85,14 @@ describe("deleteTodo", () =>  {
 
         expect(mocks.fromMock).toHaveBeenCalledWith("todos")
         expect(mocks.deleteMock).toHaveBeenCalled()
-        expect(mocks.eqMock).toHaveBeenCalledWith("id", 5)
+        expect(mocks.deleteEqMock).toHaveBeenCalledWith("id", 5)
     })
 })
 
 describe("updateTodoStatus", () => {
     beforeEach(() => {
+        vi.clearAllMocks()
+
         mocks.fromMock.mockReturnValue({
             update: mocks.updateMock
         })
@@ -96,15 +102,19 @@ describe("updateTodoStatus", () => {
         await updateTodoStatus(5, "completed")
 
         expect(mocks.fromMock).toHaveBeenCalledWith("todos")
-        expect(mocks.updateMock).toHaveBeenCalledWith({
+        expect(mocks.updateMock).toHaveBeenCalledWith(
+            expect.objectContaining({
             status: "completed"
-        })
+            })
+        )
         expect(mocks.eqMock).toHaveBeenCalledWith("id", 5)
     })
 })
 
 describe("updateTodoText", () => {
     beforeEach(() => {
+        vi.clearAllMocks()
+
         mocks.fromMock.mockReturnValue({
             update: mocks.updateMock
         })
@@ -114,28 +124,34 @@ describe("updateTodoText", () => {
         await updateTodoText(5, "コード整理")
 
         expect(mocks.fromMock).toHaveBeenCalledWith("todos")
-        expect(mocks.updateMock).toHaveBeenCalledWith({
+        expect(mocks.updateMock).toHaveBeenCalledWith(
+            expect.objectContaining({
             text: "コード整理"
-        })
+            })
+        )
         expect(mocks.eqMock).toHaveBeenCalledWith("id", 5)
     })
 })
 
 describe("updateTodoMemo", () => {
 
-    beforeEach(() => (
+    beforeEach(() => {
+        vi.clearAllMocks()
+
         mocks.fromMock.mockReturnValue({
             update: mocks.updateMock
         })
-    ))
+    })
 
     test("updates todo memo by id", async () => {
         await updateTodoMemo(5, "メモ内容を修正")
 
         expect(mocks.fromMock).toHaveBeenCalledWith("todos")
-        expect(mocks.updateMock).toHaveBeenCalledWith({
+        expect(mocks.updateMock).toHaveBeenCalledWith(
+            expect.objectContaining({
             memo: "メモ内容を修正"
-        })
+            })
+        )
         expect(mocks.eqMock).toHaveBeenCalledWith("id", 5)
     })
 

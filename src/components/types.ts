@@ -6,6 +6,7 @@ export type Todo = {
     isEditing: boolean
     categoryId: number
     createdAt: string
+    updatedAt: string
     todoDate: string
 }
 

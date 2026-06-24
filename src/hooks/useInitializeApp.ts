@@ -22,6 +22,8 @@ function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, setCategor
             isEditing: false,
             categoryId: todo.category_id,
             createdAt: todo.created_at,
+            updatedAt: todo.updated_at,
+            memo: todo.memo,
             todoDate: todo.todo_date
           })))
 

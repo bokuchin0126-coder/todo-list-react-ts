@@ -51,6 +51,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
         isEditing: false,
         categoryId: data.category_id,
         createdAt: data.created_at,
+        updatedAt: data.updated_at,
         todoDate: selectedDate
       }
 
@@ -85,10 +86,14 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
     try {
       const newStatus = target.status === "completed" ? "active" : "completed"
 
-      await updateTodoStatus(id, newStatus)
+      const data = await updateTodoStatus(id, newStatus)
 
       setTodos(prev => prev.map(todo => (
-        todo.id === id ? {...todo, status: todo.status === "completed" ? "active" : "completed"} : todo
+        todo.id === id ? {
+          ...todo,
+          status: data.status,
+          updatedAt: data.updated_at
+        } : todo
       )))
     } catch (e) {
       setError("データの更新に失敗しました")
@@ -110,10 +115,14 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
 
       try {
         setLoading(true)
-        await updateTodoText(id, newText)
+        const data = await updateTodoText(id, newText)
 
         setTodos(prev => prev.map(todo => (
-          todo.id === id ? {...todo, text: newText} : todo
+          todo.id === id ? {
+            ...todo, 
+            text: newText,
+            updatedAt: data.updated_at
+          } : todo
         )))
       } catch {
         setError("編集に失敗しました")
@@ -129,10 +138,14 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
 
       try {
         setLoading(true)
-        await updateTodoMemo(id, memo)
+        const data = await updateTodoMemo(id, memo)
 
         setTodos(prev => prev.map(todo => (
-          todo.id === id ? {...todo, memo: memo} : todo
+          todo.id === id ? {
+            ...todo, 
+            memo: memo,
+            updatedAt: data.updated_at
+          } : todo
         )))
       } catch {
         setError("編集に失敗しました")

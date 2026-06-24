@@ -26,39 +26,52 @@ export async function deleteTodo(id: number) {
         .eq("id", id)
 
     if (error) throw error
+
 }
 
 export async function updateTodoStatus(id: number, status: "completed" | "active") {
-    const { error } = await supabase
+    const { data, error } = await supabase
         .from("todos")
         .update({
-            status: status
+            status: status,
+            updated_at: new Date().toISOString()
         })
         .eq("id", id)
+        .select()
     
     if (error) throw error
+
+    return data[0]
 }
 
 export async function updateTodoText(id: number, newText: string) {
-    const { error } = await supabase
+    const { data, error } = await supabase
         .from("todos")
         .update({
-            text: newText
+            text: newText,
+            updated_at: new Date().toISOString()
         })
         .eq("id", id)
+        .select()
 
     if (error) throw error
+
+    return data[0]
 }
 
 export async function updateTodoMemo(id: number, memo: string) {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("todos")
       .update({
-        memo: memo
+        memo: memo,
+        updated_at: new Date().toISOString()
       })
       .eq("id", id)
+      .select()
 
     if (error) throw error
+
+    return data[0]
 }
 
 export async function fetchTodos() {
