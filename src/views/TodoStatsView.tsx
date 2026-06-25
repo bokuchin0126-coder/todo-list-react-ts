@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom" 
 import calculateStats from "../utils/calculateStats"
 import { TodoContext } from "../context/TodoContext"
-import { useContext } from "react"
+import { useContext, useState } from "react"
 
 
 function TodoStatsView() {
@@ -15,13 +15,50 @@ function TodoStatsView() {
         todayAchievement,
         wholeAchievement,
         continuousAchievement,
-        designationAchievement
+        designationAchievement,
+        monthlyAchievement
     } = calculateStats(todos, today, selectedDate)
+
+    const [selectedMonth, setSelectedMonth] = useState<Date>(new Date())
+
+    const changeMonth = (number: number) => setSelectedMonth(prev => {
+        const next = new Date(prev)
+        next.setMonth(next.getMonth() + number)
+        return next
+    })
 
 
     return (
         <>
         <div className="stats-grid">
+
+            <div className="stats-card">
+                <h3>月別達成率</h3>
+
+                <div className="month-selector">
+                    <button onClick={() => changeMonth(-1)}>◀</button>
+
+                    <span>
+                        {selectedMonth.getFullYear()}年
+                        {selectedMonth.getMonth() + 1}月
+                    </span>
+
+                    <button onClick={() => changeMonth(1)}>▶</button>
+                </div>
+
+                <p className="monthly-rate">
+                    {monthlyAchievement(selectedMonth)}%
+                </p>
+
+                <div className="progress-bar">
+                    <div
+                        className="progress-fill"
+                        style={{
+                        width: `${monthlyAchievement(selectedMonth)}%`,
+                        }}
+                    />
+                </div>
+            </div>
 
             <div className="stats-card">
                 <h3>今日の達成率</h3>

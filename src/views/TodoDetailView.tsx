@@ -26,6 +26,7 @@ function TodoDetailView({ handleAddTodo }: Props) {
 
   const [categoryId, setCategoryId] = useState<number>(0)
   const targetTodo = todos.find(todo => todo.id === Number(id)) 
+  const isReadOnly = isDetailMode && !isEditMode
 
 
   const handleSave = () => {
@@ -102,7 +103,7 @@ function TodoDetailView({ handleAddTodo }: Props) {
             className="detail-title"
             placeholder="タスク名"
             value={title}
-            readOnly={!isEditMode}
+            readOnly={isReadOnly}
             onChange={(e) => setTitle(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -113,7 +114,7 @@ function TodoDetailView({ handleAddTodo }: Props) {
 
           <select
             value={categoryId}
-            disabled={!isEditMode}
+            disabled={isReadOnly}
             onChange={(e) => setCategoryId(Number(e.target.value))}
           >
             {!isDetailMode && (
@@ -133,10 +134,19 @@ function TodoDetailView({ handleAddTodo }: Props) {
            
           </select>
 
+          {isDetailMode && targetTodo &&
+
+            <div>
+             <p>作成時間: {new Date(targetTodo.createdAt).toLocaleString("ja-JP")}</p>
+             <p>更新時間: {new Date(targetTodo.updatedAt).toLocaleString("ja-JP")}</p>
+           </div>
+
+          }
+
           <textarea
             className="detail-memo"
             placeholder="メモを入力"
-            readOnly={!isEditMode}
+            readOnly={isReadOnly}
             value={memo}
             onChange={(e) => setMemo(e.target.value)}
           />

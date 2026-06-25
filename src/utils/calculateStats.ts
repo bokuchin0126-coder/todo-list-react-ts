@@ -79,23 +79,36 @@ function calculateStats(todos: Todo[], today: string, selectedDate: string) {
 
     function getProgressByCategory(categoryId: number) {
 
-    const todayDate = getTodosByDate(todos, selectedDate)
+        const todayDate = getTodosByDate(todos, selectedDate)
 
-    const todosInCategory = getTodosByCategory(todayDate, categoryId) ?? []
+        const todosInCategory = getTodosByCategory(todayDate, categoryId) ?? []
 
-    const completedCount = getCompletedTodos(todosInCategory).length
+        const completedCount = getCompletedTodos(todosInCategory).length
 
-    if (todosInCategory.length === 0) return "未開始"
+        if (todosInCategory.length === 0) return "未開始"
 
-    return Math.floor((completedCount / todosInCategory.length) * 100)
-  }
+        return Math.floor((completedCount / todosInCategory.length) * 100)
+    }
+
+    function monthlyAchievement(month: Date) {
+        const monthString = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, "0")}`
+
+        const monthlyTodos = todos.filter(todo =>
+            todo.todoDate.startsWith(monthString)
+        )
+        if (monthlyTodos.length === 0) return 0
+        const completed = getCompletedTodos(monthlyTodos).length
+
+        return Math.floor((completed / monthlyTodos.length) * 100)
+    }
 
     return {
         todayAchievement,
         wholeAchievement,
         continuousAchievement,
         designationAchievement,
-        getProgressByCategory
+        getProgressByCategory,
+        monthlyAchievement
     }
 }
 

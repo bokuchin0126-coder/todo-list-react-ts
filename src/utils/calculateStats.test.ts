@@ -24,6 +24,8 @@ const createTodo = (
     isEditing: false,
     categoryId: 1,
     createdAt: "",
+    updatedAt: "",
+    memo: "",
     ...overrides
 })
 
@@ -483,5 +485,62 @@ describe("getProgressByCategory", () => {
             today
         )
         expect(stats.getProgressByCategory(1)).toBe(50)
+    })
+})
+
+describe("monthlyAchievement", () => {
+    let todos: Todo[] = []
+    beforeEach(() => {
+        todos = [
+            createTodo(),
+            createTodo({ id: 2 }),
+            createTodo({ id: 3 }),
+            createTodo({ id: 4 })
+        ]
+    })
+
+    test("returns 100 when all todos are completed", () => {
+        todos[0].status = "completed"
+        todos[1].status = "completed"
+        todos[2].status = "completed"
+        todos[3].status = "completed"
+
+        const stats = calculateStats(
+            todos,
+            today,
+            today
+        )
+        expect(stats.monthlyAchievement(new Date())).toBe(100)
+    })
+
+    test("returns 50 when half of the todos are completed", () => {
+        todos[0].status = "completed"
+        todos[1].status = "completed"
+
+        const stats = calculateStats(
+            todos,
+            today,
+            today
+        )
+        expect(stats.monthlyAchievement(new Date())).toBe(50)
+    })
+
+    test("returns 0 when no todos are completed", () => {
+        const stats = calculateStats(
+            todos,
+            today,
+            today
+        )
+        expect(stats.monthlyAchievement(new Date())).toBe(0)
+    })
+
+    test("returns 0 when there are no todos", () => {
+        todos = []
+        const stats = calculateStats(
+            todos,
+            today,
+            today
+        )
+        expect(stats.monthlyAchievement(new Date())).toBe(0)
     })
 })

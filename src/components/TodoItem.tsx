@@ -106,20 +106,18 @@ function TodoItem({ todo, searchText }: Props) {
                 </button>
               </Link>
 
-              <Link to="/tasts">
-                <button
-                  className="delete-button"
-                  onClick={() => {
-                    const isDelete = window.confirm("本当に削除しますか？")
+              <button
+                className="delete-button"
+                onClick={() => {
+                  const isDelete = window.confirm("本当に削除しますか？")
 
-                    if (isDelete) {
-                      handleDeleteTodo(todo.id)
-                    }
-                  }}
-                >
-                  削除
-                </button>
-              </Link>
+                  if (isDelete) {
+                    handleDeleteTodo(todo.id)
+                  }
+                }}
+              >
+                削除
+              </button>
 
             </div>
 
