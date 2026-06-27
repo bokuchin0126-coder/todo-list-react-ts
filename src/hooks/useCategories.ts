@@ -1,51 +1,49 @@
 import { useState } from "react"
 import type { Dispatch, SetStateAction } from 'react'
-import type { Todo, Category } from "../components/types"
+import type { Todo, Category, Color } from "../components/types"
 import { supabase } from "../lib/supabase"
-import { createCategory, keepCategory} from "../api/categoryApi"
+import { createCategory, keepTextCategory, keepColorCategory, deleteCategory} from "../api/categoryApi"
 
-function useCategory(setError: Dispatch<SetStateAction<string | null>>, 
-    setLoading: Dispatch<SetStateAction<boolean>>, errorTime: () => void) {
+function useCategory(setLoading: Dispatch<SetStateAction<boolean>>) {
 
     
     const [categories, setCategories] = useState<Category[]>([])
     const [categoryName, setCategoryName] = useState<string>("")
 
-    const handleAddCategory = async () => {
+    const handleAddCategory = async (color: Color) => {
       if (categoryName.trim() === "") return 
       
       try {
         setLoading(true)
-        const data = await createCategory(categoryName)
+        const data = await createCategory(categoryName, color)
 
         setCategories(prev => [...prev, {
           id: data.id,
           name: data.name,
+          color: color,
           isEditing: false
         }])
 
         setCategoryName("")
       } catch {
-        setError("カテゴリーの追加に失敗しました")
+        alert("カテゴリーの追加に失敗しました")
       } finally {
-        errorTime()
         setLoading(false)
       }
     } 
 
-    const handleKeepCategory = async (id: number, text: string) => {
+    const handleKeepTextCategory = async (id: number, text: string) => {
       try {
         setLoading(true)
-        await keepCategory(id, text)
+        await keepTextCategory(id, text)
 
         setCategories(prev => prev.map(category => (
           category.id === id ? {...category, name: text, isEditing: false} : category
         )))
 
       } catch {
-        setError("保存に失敗しました")
+        alert("保存に失敗しました")
       } finally {
-        errorTime()
         setLoading(false)
       }
     }
@@ -60,9 +58,35 @@ function useCategory(setError: Dispatch<SetStateAction<string | null>>,
         )))
 
       } catch {
-        setError("編集に失敗しました")
+        alert("編集に失敗しました")
+      } 
+    }
+
+    const handleKeepColorCategory = async (id: number, color: Color) => {
+      try {
+        setLoading(true)
+        await keepColorCategory(id, color)
+
+        setCategories(prev => prev.map(category => (
+          category.id === id ? {...category, color: color} : category
+        )))
+      } catch {
+        alert("編集に失敗しました")
       } finally {
-        errorTime()
+        setLoading(false)
+      }
+    }
+
+    const handleDeleteCategory = async (id: number) => {
+      try {
+        setLoading(true)
+        await deleteCategory(id)
+
+        setCategories(prev => prev.filter(category => category.id !== id))
+      } catch {
+        alert("削除に失敗しました")
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -74,7 +98,9 @@ function useCategory(setError: Dispatch<SetStateAction<string | null>>,
       setCategoryName,
       handleAddCategory,
       handleEditCategory,
-      handleKeepCategory
+      handleKeepTextCategory,
+      handleKeepColorCategory,
+      handleDeleteCategory
   }
 }
 

@@ -21,7 +21,7 @@ function TodoItem({ todo, searchText }: Props) {
   const divRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
 
-  const categoryName = categories.find(category => category.id === todo.categoryId)
+  const category = categories.find(category => category.id === todo.categoryId)
 
   useEffect(() => {
   if (todo.isEditing) {
@@ -44,7 +44,7 @@ function TodoItem({ todo, searchText }: Props) {
         document.removeEventListener("click", handleClickOutside)
     }
   }, [todo.isEditing])
-
+  
     return (
         <div className="todo-item" ref={divRef}>
             
@@ -77,7 +77,9 @@ function TodoItem({ todo, searchText }: Props) {
 
             <div className="category-cell">
 
-              <p>{categoryName?.name}</p>
+              <p className={`category-tag ${category?.color ?? "gray"}`}>
+                {category ? category.name : "未分類"}
+              </p>
 
             </div>
 

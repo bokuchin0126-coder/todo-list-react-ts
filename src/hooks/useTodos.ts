@@ -9,16 +9,20 @@ import {
   deleteTodo,
   updateTodoStatus,
   updateTodoMemo,
-  updateTodoText
+  updateTodoText,
+  updateCatoryId
 } from "../api/todoApi"
 
-function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, errorTime: () => void ) {
+function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
+
     const [todos, setTodos] = useState<Todo[]>([])
     const [searchText, setSearchText] = useState<string>("")
+
     const [selectedCategoryId, setSelectedCategoryId] = useState<number>(() => {
       const saved = localStorage.getItem("selectedCategoryId")
       return saved ? Number(saved) : 0
     })
+
     const today = new Intl.DateTimeFormat("en-CA", {
       timeZone: "Asia/Tokyo",
       year: "numeric",
@@ -57,10 +61,9 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
 
       setTodos(prev => [...prev, insertedTodo])
     } catch (e) {
-      setError("データの追加に失敗しました")
+      alert("データの追加に失敗しました")
     } finally {
       setLoading(false)
-      errorTime()
     }
   }
 
@@ -71,10 +74,9 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
      
       setTodos(prev => prev.filter(todo => todo.id !== id))
     } catch (e) {
-      setError("データの消去に失敗しました")
+      alert("データの消去に失敗しました")
     } finally {
       setLoading(false)
-      errorTime()
     }
   }
 
@@ -96,10 +98,9 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
         } : todo
       )))
     } catch (e) {
-      setError("データの更新に失敗しました")
+      alert("データの更新に失敗しました")
     } finally {
       setLoading(false)
-      errorTime()
     }
   }
   
@@ -125,10 +126,9 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
           } : todo
         )))
       } catch {
-        setError("編集に失敗しました")
+        alert("編集に失敗しました")
       } finally {
         setLoading(false)
-        errorTime()
       }
     }
 
@@ -148,10 +148,31 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
           } : todo
         )))
       } catch {
-        setError("編集に失敗しました")
+        alert("編集に失敗しました")
       } finally {
         setLoading(false)
-        errorTime()
+      }
+    }
+
+    const handleUpdateCategoryTodo = async (id: number, categoryId: number) => {
+      const target = currentTodos.find(todo => todo.id === id)
+      if (!target) return
+
+      try {
+        setLoading(true)
+        const data = await updateCatoryId(id, categoryId)
+
+        setTodos(prev => prev.map(todo => (
+          todo.id === id ? {
+            ...todo, 
+            categoryId: data.category_id,
+            updatedAt: data.updated_at
+          } : todo
+        )))
+      } catch {
+        alert("編集に失敗しました")
+      } finally {
+        setLoading(false)
       }
     }
   
@@ -171,6 +192,7 @@ function useTodo(setError: Dispatch<SetStateAction<string | null>>, setLoading: 
         handleEditTodo,
         handleUpdateTextTodo,
         handleUpdateMemoTodo,
+        handleUpdateCategoryTodo,
         changeDate
     }
 }

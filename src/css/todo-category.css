@@ -52,3 +52,54 @@
   border:1px solid #ccc;
   border-radius:6px;
 }
+
+.category-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+
+  background: var(--bg);
+  color: var(--text);
+}
+
+.category-tag.red {
+  --bg: #FEE2E2;
+  --text: #DC2626;
+}
+
+.category-tag.orange {
+  --bg: #FFEDD5;
+  --text: #EA580C;
+}
+
+.category-tag.yellow {
+  --bg: #FEF9C3;
+  --text: #CA8A04;
+}
+
+.category-tag.green {
+  --bg: #DCFCE7;
+  --text: #16A34A;
+}
+
+.category-tag.blue {
+  --bg: #DBEAFE;
+  --text: #2563EB;
+}
+
+.category-tag.purple {
+  --bg: #EDE9FE;
+  --text: #7C3AED;
+}
+
+.category-tag.pink {
+  --bg: #FCE7F3;
+  --text: #DB2777;
+}
+
+.category-tag.gray {
+  --bg: #F3F4F6;
+  --text: #4B5563;
+}

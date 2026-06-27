@@ -74,6 +74,21 @@ export async function updateTodoMemo(id: number, memo: string) {
     return data[0]
 }
 
+export async function updateCatoryId(id: number, categoryId: number) {
+    const { data, error } = await supabase
+      .from("todos")
+      .update({
+        category_id: categoryId,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", id)
+      .select()
+
+    if (error) throw error
+
+    return data[0]
+}
+
 export async function fetchTodos() {
     const { data, error } = await supabase
             .from("todos")

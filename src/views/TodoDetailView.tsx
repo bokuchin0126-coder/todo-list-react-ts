@@ -6,9 +6,10 @@ import "../css/todo-detail.css"
 
 type Props = {
   handleAddTodo: (text: string, memo: string, categoryId: number) => void
+  handleUpdateCategoryTodo: (id: number, categoryId: number) => void
 }
 
-function TodoDetailView({ handleAddTodo }: Props) {
+function TodoDetailView({ handleAddTodo, handleUpdateCategoryTodo }: Props) {
 
   const todoContext = useContext(TodoContext)
   if (!todoContext) return null
@@ -27,6 +28,8 @@ function TodoDetailView({ handleAddTodo }: Props) {
   const [categoryId, setCategoryId] = useState<number>(0)
   const targetTodo = todos.find(todo => todo.id === Number(id)) 
   const isReadOnly = isDetailMode && !isEditMode
+
+  const category = categories.find(c => c.id === targetTodo?.categoryId)
 
 
   const handleSave = () => {
@@ -99,6 +102,12 @@ function TodoDetailView({ handleAddTodo }: Props) {
 
         <div className="detail-card">
           
+          <p>
+            {targetTodo && 
+              targetTodo.status === "completed" ? "☑" : "□"
+            }
+          </p>
+
           <input
             className="detail-title"
             placeholder="タスク名"
@@ -112,27 +121,31 @@ function TodoDetailView({ handleAddTodo }: Props) {
             }}
           />
 
-          <select
-            value={categoryId}
-            disabled={isReadOnly}
-            onChange={(e) => setCategoryId(Number(e.target.value))}
-          >
-            {!isDetailMode && (
-              <option value="">
-                カテゴリを選択
-              </option>
-            )}
+          {targetTodo &&
+            <select
+              className={`category-tag ${category?.color}`}
+              value={targetTodo.categoryId}
+              disabled={isReadOnly}
+              onChange={(e) => handleUpdateCategoryTodo(targetTodo.id, (Number(e.target.value)))}
+            >
+              {!isDetailMode && (
+                <option value="">
+                  カテゴリを選択
+                </option>
+              )}
 
-            {categories.map(category => (
-              <option
-                key={category.id}
-                value={category.id}
-              >
-                {category.name}
-              </option>
-            ))}
+              {categories.map(category => (
+                <option
+                  className={`category-tag ${category.color}`}
+                  key={category.id}
+                  value={category.id}
+                >
+                  {category.name}
+                </option>
+              ))}
            
-          </select>
+            </select>
+          }
 
           {isDetailMode && targetTodo &&
 

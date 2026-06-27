@@ -24,6 +24,16 @@ function TodoStatsView() {
     const changeMonth = (number: number) => setSelectedMonth(prev => {
         const next = new Date(prev)
         next.setMonth(next.getMonth() + number)
+        
+        const today = new Date()
+
+        const currentMonth = today.getFullYear() * 12 + today.getMonth()
+        const nextMonth = next.getFullYear() * 12 + next.getMonth()
+
+        if (currentMonth < nextMonth) {
+            return prev
+        }
+
         return next
     })
 
@@ -43,7 +53,12 @@ function TodoStatsView() {
                         {selectedMonth.getMonth() + 1}月
                     </span>
 
-                    <button onClick={() => changeMonth(1)}>▶</button>
+                    <button 
+                      onClick={() => changeMonth(1)}
+                      disabled={selectedMonth.getMonth() === new Date().getMonth()}
+                    >
+                        ▶
+                    </button>
                 </div>
 
                 <p className="monthly-rate">

@@ -5,7 +5,6 @@ type TodoContextType = {
   todos: Todo[]
   categories: Category[]
   today: string
-  error: string | null
   selectedDate: string
   handleDeleteTodo: (id: number) => void
   handleToggleTodo: (id: number) => void

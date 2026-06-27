@@ -1,19 +1,22 @@
 import { TodoContext } from "../context/TodoContext"
 import { useContext, useState, useEffect } from "react"
 import { Link } from "react-router-dom" 
-import type { Category } from '../components/types'
+import { type Color, CATEGORY_COLORS } from '../components/types'
 import '../css/todo-category.css'
 
 
 type Props = {
   categoryName: string
   setCategoryName: (string: string) => void
-  handleAddCategory: () => void
+  handleAddCategory: (color: Color) => void
   handleEditCategory: (id: number) => void
-  handleKeepCategory: (id: number, text: string) => void
+  handleKeepTextCategory: (id: number, text: string) => void
+  handleKeepColorCategory: (id: number, color: Color) => void
+  handleDeleteCategory: (id: number) => void
 }
 
-function TodoCategoryView({ categoryName, setCategoryName, handleAddCategory, handleEditCategory, handleKeepCategory }: Props) {
+function TodoCategoryView({ categoryName, setCategoryName, handleAddCategory, handleEditCategory,
+  handleKeepTextCategory, handleKeepColorCategory, handleDeleteCategory }: Props) {
 
   const todoContext = useContext(TodoContext)
     if (!todoContext) return null
@@ -21,6 +24,7 @@ function TodoCategoryView({ categoryName, setCategoryName, handleAddCategory, ha
   const { categories } = todoContext
 
   const [editText, setEditText] = useState<string>("")
+  const [color, setColor] = useState<Color>("gray")
 
   const textCopy = (name: string) => {
     const isEditing = categories.filter(category => category.isEditing)
@@ -43,12 +47,28 @@ function TodoCategoryView({ categoryName, setCategoryName, handleAddCategory, ha
             onChange={(e) => setCategoryName(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                handleAddCategory()
+                handleAddCategory(color)
               }
             }}
           />
 
-          <button onClick={handleAddCategory}>
+          <select
+            className={`category-tag ${color}`}
+            value={color}
+            onChange={(e) => setColor(e.target.value as Color)}
+          >
+            {CATEGORY_COLORS.map((color) => (
+                  <option
+                    className={`category-tag ${color}`}
+                    key={color}
+                    value={color}
+                  >
+                   {color}
+                  </option>
+                ))}
+          </select>
+
+          <button onClick={() => handleAddCategory(color)}>
             追加
           </button>
 
@@ -76,7 +96,7 @@ function TodoCategoryView({ categoryName, setCategoryName, handleAddCategory, ha
                     onChange={(e) => setEditText(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
-                        handleKeepCategory(category.id, editText)
+                        handleKeepTextCategory(category.id, editText)
                         handleEditCategory(category.id)
                       }
                     }}
@@ -87,10 +107,27 @@ function TodoCategoryView({ categoryName, setCategoryName, handleAddCategory, ha
 
               </span>
 
-                {category.isEditing ? 
+              <select
+                className={`category-tag ${category.color}`}
+                value={category.color}
+                onChange={(e) =>
+                  handleKeepColorCategory(category.id, e.target.value as Color)
+                }
+              >
+                {CATEGORY_COLORS.map((color) => (
+                  <option
+                    className={`category-tag ${color}`}
+                    key={color}
+                    value={color}
+                  >
+                   {color}
+                  </option>
+                ))}
+              </select>
 
+                {category.isEditing ? 
                   <button onClick={() => {
-                    handleKeepCategory(category.id, editText),
+                    handleKeepTextCategory(category.id, editText),
                     handleEditCategory(category.id)
                   }}>
                     保存
@@ -102,8 +139,21 @@ function TodoCategoryView({ categoryName, setCategoryName, handleAddCategory, ha
                   }}>
                     編集
                   </button>
-
                 }
+
+                <button
+                  onClick={() => {
+                    const isDelete = window.confirm(
+                      "削除すると選択したカテゴリは”未分類”となりますが、本当に削除しますか？"
+                    )
+
+                    if (isDelete) {
+                      handleDeleteCategory(category.id)
+                    }
+                  }}
+                >
+                  削除
+                </button>
 
             </div>
 

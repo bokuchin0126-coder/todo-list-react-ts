@@ -5,9 +5,8 @@ import type { Todo, Filter, Category } from "../components/types"
 import { fetchTodos } from "../api/todoApi"
 
 
-function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, setCategories: Dispatch<SetStateAction<Category[]>>, filter: Filter, selectedCategoryId: number, 
-  setError: Dispatch<SetStateAction<string | null>>, setLoading: Dispatch<SetStateAction<boolean>>, selectedDate: string, today: string, 
-  errorTime: () => void){
+function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, setCategories: Dispatch<SetStateAction<Category[]>>,
+  filter: Filter, selectedCategoryId: number, setLoading: Dispatch<SetStateAction<boolean>>){
  
    
     useEffect(() => {
@@ -28,9 +27,8 @@ function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, setCategor
           })))
 
         } catch {
-          setError("データの取得に失敗しました")
+          alert("データの取得に失敗しました")
         } finally {
-          errorTime()
           setLoading(false)
         }
       }
@@ -49,12 +47,12 @@ function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, setCategor
           setCategories(data.map(category => ({
             id: category.id,
             name: category.name,
+            color: category.color,
             isEditing: false
           })))
         } catch {
-          setError("データの取得に失敗しました")
+          alert("データの取得に失敗しました")
         } finally {
-          errorTime()
           setLoading(false)
         }
       }

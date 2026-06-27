@@ -10,9 +10,23 @@ export type Todo = {
     todoDate: string
 }
 
+export const CATEGORY_COLORS = [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "blue",
+    "purple",
+    "pink",
+    "gray"
+] as const
+
+export type Color = (typeof CATEGORY_COLORS)[number]
+
 export type Category = {
     id: number
     name: string
+    color: Color
     isEditing: boolean
 }
 

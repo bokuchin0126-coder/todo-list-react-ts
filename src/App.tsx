@@ -19,16 +19,10 @@ function App() {
     const saved = localStorage.getItem("filter")
     return (saved as Filter) || "all"
   })
-  const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
 
-  const errorTime = () => {
-    setTimeout(() => {
-      setError(null)
-    }, 5000)
-  }
 
-  const todoState = useTodo(setError, setLoading, errorTime)
+  const todoState = useTodo(setLoading)
   const {
     todos,
     selectedDate,
@@ -45,10 +39,11 @@ function App() {
     handleEditTodo,
     handleUpdateTextTodo,
     handleUpdateMemoTodo,
+    handleUpdateCategoryTodo,
     changeDate
   } = todoState
 
-  const categoryState = useCategory(setError, setLoading, errorTime)
+  const categoryState = useCategory(setLoading)
   const {
     categories,
     setCategories,
@@ -56,11 +51,12 @@ function App() {
     setCategoryName,
     handleAddCategory,
     handleEditCategory,
-    handleKeepCategory
+    handleKeepTextCategory,
+    handleKeepColorCategory,
+    handleDeleteCategory
   } = categoryState
 
-  const localStrage = useInitializeApp(setTodos, setCategories, filter, selectedCategoryId, 
-    setError, setLoading, selectedDate, today, errorTime)
+  const localStrage = useInitializeApp(setTodos, setCategories, filter, selectedCategoryId, setLoading)
 
   const filteredTodos = currentTodos.filter(todo => {
     const matchFilter = filter === "all" || todo.status === filter
@@ -80,7 +76,6 @@ function App() {
         todos,
         categories,
         today,
-        error,
         selectedDate,
         handleDeleteTodo,
         handleEditTodo,
@@ -97,12 +92,14 @@ function App() {
           <Route path="/tasks/new" element={
             <TodoDetailView
               handleAddTodo={handleAddTodo}
+              handleUpdateCategoryTodo={handleUpdateCategoryTodo}
             />
           } />
 
           <Route path="/tasks/:id" element={
             <TodoDetailView
               handleAddTodo={handleAddTodo}
+              handleUpdateCategoryTodo={handleUpdateCategoryTodo}
             />
           } />
   
@@ -130,7 +127,9 @@ function App() {
               setCategoryName={setCategoryName}
               handleAddCategory={handleAddCategory}
               handleEditCategory={handleEditCategory}
-              handleKeepCategory={handleKeepCategory}
+              handleKeepTextCategory={handleKeepTextCategory}
+              handleKeepColorCategory={handleKeepColorCategory}
+              handleDeleteCategory={handleDeleteCategory}
             />
           } />
   

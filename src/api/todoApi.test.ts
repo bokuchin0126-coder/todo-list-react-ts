@@ -6,6 +6,7 @@ import {
     updateTodoStatus,
     updateTodoText,
     updateTodoMemo,
+    updateCatoryId,
     fetchTodos
 } from "./todoApi"
 
@@ -154,8 +155,29 @@ describe("updateTodoMemo", () => {
         )
         expect(mocks.eqMock).toHaveBeenCalledWith("id", 5)
     })
+})
 
+describe("updateCatoryId", () => {
 
+    beforeEach(() => {
+        vi.clearAllMocks()
+
+        mocks.fromMock.mockReturnValue({
+            update: mocks.updateMock
+        })
+    })
+
+    test("updates todo memo by id", async () => {
+        await updateCatoryId(5, 4)
+
+        expect(mocks.fromMock).toHaveBeenCalledWith("todos")
+        expect(mocks.updateMock).toHaveBeenCalledWith(
+            expect.objectContaining({
+              category_id: 4
+            })
+        )
+        expect(mocks.eqMock).toHaveBeenCalledWith("id", 5)
+    })
 })
 
 describe("fetchTodos", () => {
