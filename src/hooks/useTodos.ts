@@ -41,10 +41,9 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
     }
 
     const handleAddTodo = async (text: string, memo: string, categoryId: number) => {
-    if (!text.trim()) return
-    
-    setLoading(true)
     try {
+      setLoading(true)
+      if (text.trim() === "") throw new Error("タスク名を入力してください")
       const data = await createTodo(text, memo, categoryId, selectedDate)
 
       const insertedTodo: Todo = {
@@ -60,8 +59,15 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
       }
 
       setTodos(prev => [...prev, insertedTodo])
+      
     } catch (e) {
-      alert("データの追加に失敗しました")
+
+      if (e instanceof Error) {
+        alert(`${e.message}`)
+      } else {
+        alert("予期せぬエラーが発生しました")
+      }
+
     } finally {
       setLoading(false)
     }
@@ -74,7 +80,7 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
      
       setTodos(prev => prev.filter(todo => todo.id !== id))
     } catch (e) {
-      alert("データの消去に失敗しました")
+      alert("予期せぬエラーが発生しました")
     } finally {
       setLoading(false)
     }
@@ -98,7 +104,7 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
         } : todo
       )))
     } catch (e) {
-      alert("データの更新に失敗しました")
+      alert("予期せぬエラーが発生しました")
     } finally {
       setLoading(false)
     }
@@ -126,7 +132,7 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
           } : todo
         )))
       } catch {
-        alert("編集に失敗しました")
+        alert("予期せぬエラーが発生しました")
       } finally {
         setLoading(false)
       }
@@ -148,7 +154,7 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
           } : todo
         )))
       } catch {
-        alert("編集に失敗しました")
+        alert("予期せぬエラーが発生しました")
       } finally {
         setLoading(false)
       }
@@ -170,7 +176,7 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
           } : todo
         )))
       } catch {
-        alert("編集に失敗しました")
+        alert("予期せぬエラーが発生しました")
       } finally {
         setLoading(false)
       }

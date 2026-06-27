@@ -29,7 +29,9 @@ function TodoDetailView({ handleAddTodo, handleUpdateCategoryTodo }: Props) {
   const targetTodo = todos.find(todo => todo.id === Number(id)) 
   const isReadOnly = isDetailMode && !isEditMode
 
-  const category = categories.find(c => c.id === targetTodo?.categoryId)
+  const selectedCategory = categories.find((c) => 
+    c.id === (isDetailMode ? targetTodo?.categoryId : categoryId)
+  )
 
 
   const handleSave = () => {
@@ -48,6 +50,8 @@ function TodoDetailView({ handleAddTodo, handleUpdateCategoryTodo }: Props) {
     }
     else {
       handleAddTodo(title, memo, categoryId)
+      if (title === "") return
+      
       setTitle("")
       navigate("/tasks")
     }
@@ -121,31 +125,37 @@ function TodoDetailView({ handleAddTodo, handleUpdateCategoryTodo }: Props) {
             }}
           />
 
-          {targetTodo &&
-            <select
-              className={`category-tag ${category?.color}`}
-              value={targetTodo.categoryId}
-              disabled={isReadOnly}
-              onChange={(e) => handleUpdateCategoryTodo(targetTodo.id, (Number(e.target.value)))}
-            >
-              {!isDetailMode && (
-                <option value="">
-                  カテゴリを選択
-                </option>
-              )}
+          <select
+            className={`category-tag ${selectedCategory?.color}`}
+            value={isDetailMode ? targetTodo?.categoryId : categoryId}
+            disabled={isReadOnly}
+            onChange={(e) => {
+              const value = Number(e.target.value)
 
-              {categories.map(category => (
-                <option
-                  className={`category-tag ${category.color}`}
-                  key={category.id}
-                  value={category.id}
-                >
-                  {category.name}
-                </option>
-              ))}
+              if (isDetailMode && targetTodo) {
+                handleUpdateCategoryTodo(targetTodo.id, value)
+              } else {
+                setCategoryId(value)
+              }
+            }}
+          >
+            {!isDetailMode && (
+              <option value="">
+                 カテゴリを選択
+              </option>
+            )}
+
+            {categories.map(category => (
+              <option
+                className={`category-tag ${category.color}`}
+                key={category.id}
+                value={category.id}
+              >
+                {category.name}
+              </option>
+            ))}
            
-            </select>
-          }
+          </select>
 
           {isDetailMode && targetTodo &&
 
@@ -171,11 +181,9 @@ function TodoDetailView({ handleAddTodo, handleUpdateCategoryTodo }: Props) {
                 {isEditMode ? "更新" : "編集"}
               </button>
             :
-              <Link to="/tasks">
                 <button onClick={handleSave}>
                   保存
                 </button>
-              </Link>
             }
 
             {isDetailMode && isEditMode && targetTodo && (

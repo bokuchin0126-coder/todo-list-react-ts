@@ -55,10 +55,6 @@ function TodoListView({ filteredTodos, selectedCategoryId, searchText, filter, s
               placeholder="タスクを検索"
             />
 
-            <button>
-              フィルター
-            </button>
-
             <Link to="/tasks/new">
               <button>
                 新しいタスク＋
