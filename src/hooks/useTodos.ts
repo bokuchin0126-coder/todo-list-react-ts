@@ -18,11 +18,6 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
     const [todos, setTodos] = useState<Todo[]>([])
     const [searchText, setSearchText] = useState<string>("")
 
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number>(() => {
-      const saved = localStorage.getItem("selectedCategoryId")
-      return saved ? Number(saved) : 0
-    })
-
     const today = new Intl.DateTimeFormat("en-CA", {
       timeZone: "Asia/Tokyo",
       year: "numeric",
@@ -59,7 +54,7 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
       }
 
       setTodos(prev => [...prev, insertedTodo])
-      
+
     } catch (e) {
 
       if (e instanceof Error) {
@@ -189,9 +184,7 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
         setTodos,
         currentTodos,
         searchText,
-        selectedCategoryId,
         setSearchText,
-        setSelectedCategoryId,
         handleAddTodo,
         handleToggleTodo,
         handleDeleteTodo,

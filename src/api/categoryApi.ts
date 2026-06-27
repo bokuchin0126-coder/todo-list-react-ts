@@ -46,3 +46,13 @@ export async function deleteCategory(id: number) {
 
     if (error) throw error
 }
+
+export async function fetchCategory() {
+    const { data, error } = await supabase
+            .from("categories")
+            .select("*")
+
+    if (error) throw error
+
+    return data
+}

@@ -46,85 +46,99 @@ function TodoItem({ todo, searchText }: Props) {
   }, [todo.isEditing])
   
     return (
-        <div className="todo-item" ref={divRef}>
-            
-            <div className="task-cell">
+    <div className="todo-item" ref={divRef}>
 
-              <button
-                className="check-button" 
-                onClick={() => handleToggleTodo(todo.id)}
-              >
-                {todo.status === "active" ? "□" : "✓"}
-              </button>
+      <div className="task-cell">
 
-              <span 
-                className=
-                  {todo.status === "completed"
-                    ? "completed" 
-                    : ""}
-              >
-                {searchText ? todo.text.split(searchText).map((part, i, arr) => (
+        <button
+          className={`check-button ${
+            todo.status === "completed" ? "checked" : ""
+          }`}
+          onClick={() => handleToggleTodo(todo.id)}
+        >
+          {todo.status === "completed" ? "✓" : ""}
+        </button>
 
-                  <span key={i}>
-                    {part}
-                    {i < arr.length - 1 && <mark>{searchText}</mark>}
-                  </span>
-
-                )) : todo.text}
+        <span
+          className={todo.status === "completed" ? "completed" : ""}
+        >
+          {searchText ? (
+            todo.text.split(searchText).map((part, i, arr) => (
+              <span key={i}>
+                {part}
+                {i < arr.length - 1 && <mark>{searchText}</mark>}
               </span>
-
-            </div>
-
-            <div className="category-cell">
-
-              <p className={`category-tag ${category?.color ?? "gray"}`}>
-                {category ? category.name : "未分類"}
-              </p>
-
-            </div>
-
-            <div className="status-cell">
-
-                {todo.status === "completed"
-                  ? "完了"
-                  : "アクティブ"}
-
-            </div>
-
-            <div className="time-cell">
-                {new Date(todo.createdAt).toLocaleString("ja-JP")}
-            </div>
-
-            <div className="action-cell">
-
-              <Link to={`/tasks/${todo.id}`}>
-                <button 
-                  className="edit-button"
-                  onClick={() => {
-                    handleEditTodo(todo.id)
-                  }}
-                >
-                  詳細
-                </button>
-              </Link>
-
-              <button
-                className="delete-button"
-                onClick={() => {
-                  const isDelete = window.confirm("本当に削除しますか？")
-
-                  if (isDelete) {
-                    handleDeleteTodo(todo.id)
-                  }
-                }}
-              >
-                削除
-              </button>
-
-            </div>
-
-        </div>
+            ))
+          ) : (
+            todo.text
+          )}
+        </span>
+  
+      </div>
+  
+      <div className="category-cell">
+  
+        <span
+          className={`category-color-tag ${category?.color ?? "gray"}`}
+        >
+          {category ? category.name : "未分類"}
+        </span>
+  
+      </div>
+  
+      <div className="status-cell">
+  
+        <span
+          className={
+            todo.status === "completed"
+              ? "status-badge completed-status"
+              : "status-badge active-status"
+          }
+        >
+          {todo.status === "completed"
+            ? "完了"
+            : "アクティブ"}
+        </span>
+  
+      </div>
+  
+      <div className="time-cell">
+        {new Date(todo.createdAt).toLocaleTimeString("ja-JP", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </div>
+  
+      <div className="action-cell">
+  
+        <Link to={`/tasks/${todo.id}`}>
+          <button
+            className="edit-button"
+            onClick={() => handleEditTodo(todo.id)}
+          >
+            詳細
+          </button>
+        </Link>
+  
+        <button
+          className="delete-button"
+          onClick={() => {
+            const isDelete = window.confirm(
+              "本当に削除しますか？"
+            )
+  
+            if (isDelete) {
+              handleDeleteTodo(todo.id)
+            }
+          }}
+        >
+          削除
+        </button>
+  
+      </div>
+  
+    </div>
     )
 }
-
+ 
 export default TodoItem

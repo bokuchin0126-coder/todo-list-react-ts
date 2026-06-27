@@ -30,9 +30,7 @@ function App() {
     setTodos,
     currentTodos,
     searchText,
-    selectedCategoryId,
     setSearchText,
-    setSelectedCategoryId,
     handleAddTodo,
     handleToggleTodo,
     handleDeleteTodo,
@@ -56,7 +54,7 @@ function App() {
     handleDeleteCategory
   } = categoryState
 
-  const localStrage = useInitializeApp(setTodos, setCategories, filter, selectedCategoryId, setLoading)
+  const localStrage = useInitializeApp(setTodos, setCategories, filter, setLoading)
 
   const filteredTodos = currentTodos.filter(todo => {
     const matchFilter = filter === "all" || todo.status === filter
@@ -66,8 +64,6 @@ function App() {
     return matchFilter && matchSearch
   })
   
-
-  const todoByCategory = filteredTodos.filter(todo => todo.categoryId === selectedCategoryId)
 
   return (
     <>
@@ -108,7 +104,6 @@ function App() {
               <TodoListView
                 filteredTodos={filteredTodos}
                 searchText={searchText}
-                selectedCategoryId={selectedCategoryId}
                 filter={filter}
                 setSearchText={setSearchText}
                 setFilter={setFilter}

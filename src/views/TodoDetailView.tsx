@@ -79,7 +79,12 @@ function TodoDetailView({ handleAddTodo, handleUpdateCategoryTodo }: Props) {
         <div className="detail-header">
 
           <Link to="/tasks">
-            <button onClick={() => editCancell()}>← 戻る</button>
+            <button
+              onClick={() => editCancell()}
+              disabled={isEditMode}
+            >
+              ← 戻る
+            </button>
           </Link>
 
           <h1>

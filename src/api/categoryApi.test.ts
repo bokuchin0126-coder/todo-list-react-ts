@@ -1,5 +1,11 @@
 import { describe, test, expect, beforeEach, vi } from "vitest"
-import { createCategory, keepTextCategory, keepColorCategory, deleteCategory } from "./categoryApi"
+import { 
+    createCategory, 
+    keepTextCategory,
+    keepColorCategory, 
+    deleteCategory,
+    fetchCategory
+} from "./categoryApi"
 
 
 const mocks = vi.hoisted(() => {
@@ -108,5 +114,20 @@ describe("deleteCategory", () => {
         expect(mocks.fromMock).toHaveBeenCalledWith("categories")
         expect(mocks.deleteMock).toHaveBeenCalled()
         expect(mocks.eqMock).toHaveBeenCalledWith("id", 5)
+    })
+})
+
+describe("fetchCategory", () => {
+    beforeEach(() => {
+        mocks.fromMock.mockReturnValue({
+            select: mocks.selectMock
+        })
+    })
+
+    test("fetches all categories", async () => {
+        await fetchCategory()
+
+        expect(mocks.fromMock).toHaveBeenCalledWith("categories")
+        expect(mocks.selectMock).toHaveBeenCalledWith("*")
     })
 })

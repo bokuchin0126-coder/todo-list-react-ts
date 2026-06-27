@@ -1,52 +1,168 @@
 .todo-item {
-  display: grid;
-  grid-template-columns: 1fr 120px 120px 220px 140px;
-  align-items: center;
+  display:grid;
+  grid-template-columns:
+  minmax(320px,3.8fr)
+  minmax(120px,1.3fr)
+  minmax(120px,1.2fr)
+  minmax(150px,1.5fr)
+  minmax(130px,1.2fr);
 
-  padding: 16px 20px;
-  border-top: 1px solid #e5e7eb;
+  align-items:center;
+
+  padding: 22px 24px;
+
+  border-top: 1px solid #e2e8f0;
+
+  transition: background .2s ease;
 }
 
-.task-cell {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.todo-item:hover {
+  background: #f8fafc;
 }
 
 .category-cell,
 .status-cell,
-.time-cell {
-  color: #4b5563;
-}
-
-.action-cell {
+.action-cell,
+.time-cell,
+.task-cell {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  justify-self: start;
 }
 
-.action-cell button {
-  border: none;
-  border-radius: 6px;
-  padding: 8px 12px;
-  cursor: pointer;
+.category-cell {
+  padding-right: 20px;
+}
+
+.status-cell {
+  padding-right: 15px;
+}
+
+.time-cell {
+  padding-left: 17px;
+}
+
+.task-cell {
+  gap: 14px;
+  padding-left: 15px;
+}
+
+.task-cell span {
+  color: #111827;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.5;
 }
 
 .check-button {
-  width: 28px;
-  height: 28px;
-  border: 1px solid #cbd5e1;
-  
-  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 2px solid #cbd5e1;
+  border-radius: 20%;
+
   background: white;
+
+  color: white;
+
   cursor: pointer;
+  transition: .2s;
+}
+
+.check-button:hover {
+  border-color: #6366f1;
+}
+
+.check-button.checked {
+  background: #6366f1;
+  border-color: #6366f1;
 }
 
 .completed {
   text-decoration: line-through;
-  opacity: 0.6;
+  color: #9ca3af;
+}
+
+.status-badge {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  min-width: 80px;
+
+  padding: 6px 14px;
+
+  border-radius: 12px;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.active-status {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.completed-status {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.time-cell {
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.action-cell {
+  gap: 10px;
+  justify-content: center;
+}
+
+.action-cell a {
+  text-decoration: none;
+}
+
+.action-cell button {
+  padding: 8px 14px;
+
+  border: none;
+  border-radius: 6px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: .2s;
+}
+
+.edit-button {
+  background: #eef2ff;
+  color: #4f46e5;
+}
+
+.edit-button:hover {
+  background: #6366f1;
+  color: white;
+}
+
+.delete-button {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.delete-button:hover {
+  background: #dc2626;
+  color: white;
 }
 
 mark {
-  background: #fef08a;
-  padding: 0 2px;
+  background: #fde68a;
+  border-radius: 4px;
+  padding: 1px 3px;
 }

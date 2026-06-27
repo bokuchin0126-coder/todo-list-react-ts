@@ -3,10 +3,11 @@ import type { Dispatch, SetStateAction } from 'react'
 import { supabase } from "../lib/supabase"
 import type { Todo, Filter, Category } from "../components/types"
 import { fetchTodos } from "../api/todoApi"
+import { fetchCategory } from "../api/categoryApi"
 
 
 function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, setCategories: Dispatch<SetStateAction<Category[]>>,
-  filter: Filter, selectedCategoryId: number, setLoading: Dispatch<SetStateAction<boolean>>){
+  filter: Filter, setLoading: Dispatch<SetStateAction<boolean>>){
  
    
     useEffect(() => {
@@ -39,11 +40,8 @@ function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, setCategor
       const fetch = async () => {
         try {
           setLoading(true)
-          const { data, error } = await supabase
-            .from("categories")
-            .select("*")
+          const data = await fetchCategory()
 
-          if (error) throw error
           setCategories(data.map(category => ({
             id: category.id,
             name: category.name,
@@ -62,10 +60,6 @@ function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, setCategor
     useEffect(() => {
       localStorage.setItem("filter", filter)
     }, [filter])
-
-    useEffect(() => {
-      localStorage.setItem("selectedCategoryId", String(selectedCategoryId))
-    }, [selectedCategoryId])
 }
 
 export default useInitializeApp
