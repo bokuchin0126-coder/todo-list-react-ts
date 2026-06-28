@@ -2,7 +2,7 @@
 
 React + TypeScriptで作成したTodo管理アプリです。
 
-## Features
+## 機能
 
 - タスクの追加・編集・削除
 - タスクの完了管理
@@ -18,7 +18,7 @@ React + TypeScriptで作成したTodo管理アプリです。
 
 ---
 
-## Tech Stack
+## 使用技術
 
 - React
 - TypeScript
@@ -29,7 +29,7 @@ React + TypeScriptで作成したTodo管理アプリです。
 
 ---
 
-## Screenshots
+## スクリーンショット
 
 ### Task List
 
@@ -49,7 +49,7 @@ React + TypeScriptで作成したTodo管理アプリです。
 
 ---
 
-## Getting Started
+## 起動方法
 
 ```bash
 git clone https://github.com/your-account/todo-list-react-ts.git
@@ -63,7 +63,7 @@ npm run dev
 
 ---
 
-## Project Structure
+## ディレクトリ構成
 
 ```
 src
@@ -78,7 +78,7 @@ src
 
 ---
 
-## Learning Points
+## このアプリで学んだこと
 
 このアプリでは以下の技術を重点的に学習しました。
 
@@ -93,7 +93,7 @@ src
 
 ---
 
-## Future Improvements
+## 今後追加したい機能
 
 - Firebase Authentication
 - Cloud Firestore
@@ -102,9 +102,4 @@ src
 - ドラッグ&ドロップ
 - ダークモード
 - モバイルUI改善
-
----
-
-## License
-
-MIT
+- 
