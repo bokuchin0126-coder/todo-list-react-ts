@@ -1,73 +1,110 @@
-# React + TypeScript + Vite
+# Todo List
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScriptで作成したTodo管理アプリです。
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- タスクの追加・編集・削除
+- タスクの完了管理
+- カテゴリ管理
+- カテゴリカラー設定
+- タスク詳細画面
+- 月別達成率
+- 今日・過去7日・過去30日・総達成率
+- 連続達成日数
+- 月切り替え機能
+- レスポンシブを意識したUI
+- LocalStorageによるデータ保存
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tech Stack
 
-## Expanding the ESLint configuration
+- React
+- TypeScript
+- React Router
+- Context API
+- CSS
+- LocalStorage
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Screenshots
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Task List
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+<img src="./public/screenshots/task-list.png" width="900">
+
+### Task Detail
+
+<img src="./public/screenshots/task-detail.png" width="900">
+
+### Category
+
+<img src="./public/screenshots/category.png" width="900">
+
+### Statistics
+
+<img src="./public/screenshots/statistics.png" width="900">
+
+---
+
+## Getting Started
+
+```bash
+git clone https://github.com/your-account/todo-list-react-ts.git
+
+cd todo-list-react-ts
+
+npm install
+
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Project Structure
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src
+├── components
+├── context
+├── css
+├── hooks
+├── pages
+├── utils
+└── types
+```
+
+---
+
+## Learning Points
+
+このアプリでは以下の技術を重点的に学習しました。
+
+- React Hooks
+- TypeScript
+- Context APIによる状態管理
+- LocalStorageとの連携
+- コンポーネント設計
+- カスタムCSSによるUI設計
+- データ集計ロジックの実装
+- 再利用可能なコンポーネント設計
+
+---
+
+## Future Improvements
+
+- Firebase Authentication
+- Cloud Firestore
+- バックエンドAPI連携
+- カレンダー表示
+- ドラッグ&ドロップ
+- ダークモード
+- モバイルUI改善
+
+---
+
+## License
+
+MIT
