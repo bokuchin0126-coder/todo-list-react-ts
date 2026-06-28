@@ -50,27 +50,6 @@ function TodoStatsView() {
                 <p>あなたのタスク達成状況を確認しましょう</p>
             </div>
 
-            <div className="month-selector">
-                <button onClick={() => changeMonth(-1)}>
-                    ◀
-                </button>
-
-                <span>
-                    {selectedMonth.getFullYear()}年
-                    {selectedMonth.getMonth() + 1}月
-                </span>
-
-                <button
-                    onClick={() => changeMonth(1)}
-                    disabled={
-                        selectedMonth.getFullYear() === todayDate.getFullYear() &&
-                        selectedMonth.getMonth() === todayDate.getMonth()
-                    }
-                >
-                    ▶
-                </button>
-            </div>
-
         </div>
 
         <div className="stats-summary">
