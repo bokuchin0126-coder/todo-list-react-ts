@@ -1,6 +1,28 @@
-# Todo List
+# Todo List（パソコン対応）
 
 React + TypeScriptで作成したTodo管理アプリです。
+
+## デモ
+
+## スクリーンショット
+
+### Task List
+
+<img src="./public/screenshots/task-list.png" width="900">
+
+### Task Detail
+
+<img src="./public/screenshots/task-detail.png" width="900">
+
+### Category
+
+<img src="./public/screenshots/category.png" width="900">
+
+### Statistics
+
+<img src="./public/screenshots/statistics.png" width="900">
+
+---
 
 ## 機能
 
@@ -26,26 +48,6 @@ React + TypeScriptで作成したTodo管理アプリです。
 - Context API
 - CSS
 - LocalStorage
-
----
-
-## スクリーンショット
-
-### Task List
-
-<img src="./public/screenshots/task-list.png" width="900">
-
-### Task Detail
-
-<img src="./public/screenshots/task-detail.png" width="900">
-
-### Category
-
-<img src="./public/screenshots/category.png" width="900">
-
-### Statistics
-
-<img src="./public/screenshots/statistics.png" width="900">
 
 ---
 
