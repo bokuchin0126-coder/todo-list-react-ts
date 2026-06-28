@@ -3,6 +3,8 @@ import type { Category } from "../components/types"
 import { TodoContext } from "../context/TodoContext"
 import { useContext, useState, useEffect } from "react"
 import "../css/todo-detail.css" 
+import "../css/todo-category.css" 
+
 
 type Props = {
   handleAddTodo: (text: string, memo: string, categoryId: number) => void
@@ -78,125 +80,179 @@ function TodoDetailView({ handleAddTodo, handleUpdateCategoryTodo }: Props) {
 
         <div className="detail-header">
 
-          <Link to="/tasks">
-            <button
-              onClick={() => editCancell()}
-              disabled={isEditMode}
-            >
-              ← 戻る
-            </button>
+          <Link
+            className="detail-back"
+            to="/tasks"
+            onClick={() => editCancell()}
+          >
+            ← 戻る
           </Link>
 
-          <h1>
+          <h1 className="detail-heading">
             {isDetailMode ? "タスク詳細" : "新しいタスク"}
           </h1>
 
-          {isDetailMode && targetTodo && (
-            <Link to="tasks">
-              <button
-                onClick={() => {
-                  const isDelete = window.confirm("本当に削除しますか？")
-
-                  if (isDelete) {
-                    handleDeleteTodo(targetTodo.id)
-                  }
-                }}
-              >
-                削除
-              </button>
-            </Link>
+          {isDetailMode && targetTodo ? (
+            <button
+              className="detail-delete"
+              onClick={() => {
+                if (window.confirm("本当に削除しますか？")) {
+                  handleDeleteTodo(targetTodo.id)
+                  navigate("/tasks")
+                }
+              }}
+            >
+              削除
+            </button>
+          ) : (
+            <div style={{ width: 90 }} />
           )}
-          
         </div>
 
         <div className="detail-card">
           
-          <p>
-            {targetTodo && 
-              targetTodo.status === "completed" ? "☑" : "□"
-            }
-          </p>
+          <div className="detail-top">
 
-          <input
-            className="detail-title"
-            placeholder="タスク名"
-            value={title}
-            readOnly={isReadOnly}
-            onChange={(e) => setTitle(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSave()
-              }
-            }}
-          />
+            <div className="detail-title-area">
 
-          <select
-            className={`category-tag ${selectedCategory?.color}`}
-            value={isDetailMode ? targetTodo?.categoryId : categoryId}
-            disabled={isReadOnly}
-            onChange={(e) => {
-              const value = Number(e.target.value)
+              <p className="detail-status">
+                {targetTodo?.status === "completed" ? "☑" : "□"}
+              </p>
 
-              if (isDetailMode && targetTodo) {
-                handleUpdateCategoryTodo(targetTodo.id, value)
-              } else {
-                setCategoryId(value)
-              }
-            }}
-          >
-            {!isDetailMode && (
-              <option value="">
-                 カテゴリを選択
-              </option>
-            )}
+              <input
+                className="detail-title"
+                placeholder="タスク名"
+                value={title}
+                readOnly={isReadOnly}
+                onChange={(e)=>setTitle(e.target.value)}
+                onKeyDown={(e)=>{
+                  if(e.key==="Enter"){
+                    handleSave()
+                  }
+                }}
+              />
+ 
+            </div>
+  
+            <select
+              className={`detail-category ${selectedCategory?.color}`}
+              value={isDetailMode ? targetTodo?.categoryId : categoryId}
+              disabled={isReadOnly}
+              onChange={(e)=>{
+                const value=Number(e.target.value)
+ 
+                if(isDetailMode && targetTodo){
+                  handleUpdateCategoryTodo(targetTodo.id,value)
+                }else{
+                  setCategoryId(value)
+                }
+              }}
+            >
 
-            {categories.map(category => (
-              <option
-                className={`category-tag ${category.color}`}
-                key={category.id}
-                value={category.id}
-              >
-                {category.name}
-              </option>
-            ))}
-           
-          </select>
+              {!isDetailMode && (
+                <option value="" className="detail-category-placeholder">
+                  カテゴリを選択
+                </option>
+              )}
 
+              {categories.map(category=>(
+                <option
+                  className={`detail-category ${category.color}`}
+                  key={category.id}
+                  value={category.id}
+                >
+                  {category.name}
+                </option>
+              ))}
+ 
+            </select>
+ 
+          </div>
+ 
           {isDetailMode && targetTodo &&
 
-            <div>
-             <p>作成時間: {new Date(targetTodo.createdAt).toLocaleString("ja-JP")}</p>
-             <p>更新時間: {new Date(targetTodo.updatedAt).toLocaleString("ja-JP")}</p>
-           </div>
+            <div className="detail-info">
 
+              <div className="detail-info-card">
+
+                <span className="detail-info-label">
+                  📅 作成日時
+                </span>
+
+                <strong>
+                  {new Date(targetTodo.createdAt).toLocaleString(
+                  "ja-JP",
+                  {
+                    year:"numeric",
+                    month:"2-digit",
+                    day:"2-digit",
+                    hour:"2-digit",
+                    minute:"2-digit"
+                  }
+                  )}
+                </strong>
+              </div>
+ 
+              <div className="detail-info-card">
+ 
+                <span className="detail-info-label">
+                  🕒 更新日時
+                </span>
+        
+                <strong>
+                  {new Date(targetTodo.updatedAt).toLocaleString(
+                  "ja-JP",
+                  {
+                    year:"numeric",
+                    month:"2-digit",
+                    day:"2-digit",
+                    hour:"2-digit",
+                    minute:"2-digit"
+                  }
+                  )}
+                </strong>
+
+              </div>
+            </div>
           }
 
-          <textarea
-            className="detail-memo"
-            placeholder="メモを入力"
-            readOnly={isReadOnly}
-            value={memo}
-            onChange={(e) => setMemo(e.target.value)}
-          />
+          <div className="detail-memo-area">
+
+
+            <textarea
+              className="detail-memo"
+              placeholder="メモを入力"
+              readOnly={isReadOnly}
+              value={memo}
+              onChange={(e)=>setMemo(e.target.value)}
+            />
+      
+          </div>
 
           <div className="detail-actions">
 
-            {isDetailMode ? 
-              <button onClick={handleSave}>
-                {isEditMode ? "更新" : "編集"}
-              </button>
-            :
-                <button onClick={handleSave}>
-                  保存
-                </button>
-            }
+            <button
+              className={`detail-save ${isEditMode ? "editing" : ""}`}
+              onClick={handleSave}
+            >
+              {isDetailMode
+              ? isEditMode
+              ? "更新"
+              : "編集"
+              : "保存"}
+            </button>
 
             {isDetailMode && isEditMode && targetTodo && (
+
               <button
+                className="detail-status-button"
                 onClick={() => handleToggleTodo(targetTodo.id)}
               >
-                {targetTodo.status === "completed" ? "未完了にする" : "完了にする"}
+                {targetTodo.status === "completed"
+                ? "未完了にする"
+                : "完了にする"}
               </button>
+
             )}
 
           </div>

@@ -7,13 +7,13 @@
 /* ---------- Sidebar ---------- */
 
 .sidebar {
-  width: 220px;
+  width: 240px;
   background: #ffffff;
-
   border-right: 1px solid #e5e7eb;
 
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   justify-content: space-between;
 
   padding: 28px 18px;
@@ -144,15 +144,16 @@
 .main-content {
   flex: 1;
 
-  padding: 48px 56px;
-
+  padding:24px 40px;
+  
   background: #f8fafc;
 
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .content-wrapper {
-  width: 100%;
-  max-width: 1000px;
+  width: min(1500px, 100%);
+  margin: 0 auto;
+  max-width: none;
 }

@@ -1,0 +1,250 @@
+/* ===========================
+    Stats Page
+=========================== */
+
+.stats-page{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+}
+
+/* ===========================
+    Header
+=========================== */
+
+.stats-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.stats-header h1{
+    margin:0;
+
+    font-size:34px;
+    font-weight:700;
+    line-height:1.2;
+}
+
+.stats-header p{
+    margin:8px 0 0;
+    font-size:15px;
+    color:#777;
+}
+
+/* ===========================
+    Month Selector
+=========================== */
+
+.month-selector{
+    display:flex;
+    align-items:center;
+
+    border:1px solid #e7e7e7;
+    border-radius:14px;
+    overflow:hidden;
+
+    background:white;
+    box-shadow:0 6px 18px rgba(0,0,0,.05);
+}
+
+.month-selector button{
+    width:46px;
+    height:46px;
+
+    border:none;
+    background:white;
+
+    font-size:18px;
+    cursor:pointer;
+}
+
+.month-selector span{
+    width:135px;
+    text-align:center;
+
+    font-size:17px;
+    font-weight:700;
+}
+
+/* ===========================
+    Summary
+=========================== */
+
+.stats-summary{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:16px;
+}
+
+.summary-card{
+    background:white;
+    border-radius:20px;
+    padding:18px;
+
+    box-shadow:
+    0 8px 24px rgba(15,23,42,.08);
+
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.summary-card h3{
+    font-size:15px;
+    color:#666;
+}
+
+.summary-value{
+    font-size:38px;
+    font-weight:700;
+    line-height:1;
+}
+
+.summary-value.blue{color:#2563eb;}
+.summary-value.purple{color:#7c3aed;}
+.summary-value.green{color:#22c55e;}
+.summary-value.orange{color:#f59e0b;}
+.summary-value.pink{color:#ec4899;}
+
+.summary-progress{
+    height:8px;
+    background:#edf2f7;
+    border-radius:99px;
+    overflow:hidden;
+}
+
+.summary-fill{
+    height:100%;
+    border-radius:99px;
+    background:#2563eb;
+}
+
+.summary-fill.purple{
+    background:#7c3aed;
+}
+
+.summary-fill.green{
+    background:#22c55e;
+}
+
+.summary-fill.orange{
+    background:#f59e0b;
+}
+
+.streak{
+    justify-content:center;
+}
+
+/* ===========================
+    Monthly Card
+=========================== */
+
+.monthly-card{
+    background:white;
+    border-radius:24px;
+
+    padding:28px;
+    box-shadow:
+    0 10px 30px rgba(15,23,42,.08);
+}
+
+.monthly-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:25px;
+}
+
+.monthly-header h2{
+    font-size:30px;
+}
+
+.monthly-content{
+    display:flex;
+    align-items:center;
+    gap:40px;
+}
+
+/* ===========================
+    Circle
+=========================== */
+
+.circle-progress{
+    position:relative;
+    width:180px;
+    height:180px;
+
+    border-radius:50%;
+    background:
+    conic-gradient(
+        #2563eb 0deg,
+        #2563eb calc(var(--progress) * 3.6deg),
+        #edf2f7 0deg
+    );
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.circle-inner{
+    width:132px;
+    height:132px;
+    border-radius:50%;
+
+    background:white;
+    display:flex;
+
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+.circle-inner span{
+    font-size:38px;
+    font-weight:700;
+    color:#2563eb;
+}
+
+.circle-inner p{
+    margin-top:6px;
+    font-size:14px;
+    color:#888;
+}
+
+/* ===========================
+    Progress Bar
+=========================== */
+
+.bar-area{
+    flex:1;
+}
+
+.bar-background{
+    width:100%;
+    height:14px;
+
+    background:#edf2f7;
+    border-radius:999px;
+    overflow:hidden;
+}
+
+.bar-fill{
+    height:100%;
+    border-radius:999px;
+    background:linear-gradient(
+        90deg,
+        #4f8cff,
+        #2563eb
+    );
+}
+
+.bar-label{
+    margin-top:12px;
+    font-size:18px;
+    font-weight:600;
+    color:#555;
+}

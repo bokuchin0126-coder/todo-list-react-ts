@@ -62,6 +62,7 @@ function TodoCategoryView({ categoryName, setCategoryName, handleAddCategory, ha
       >
         {CATEGORY_COLORS.map((color) => (
           <option
+            className={`category-select category-color-tag ${color}`}
             key={color}
             value={color}
           >
