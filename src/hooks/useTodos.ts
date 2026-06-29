@@ -1,5 +1,4 @@
 import { useState } from "react"
-import type { Dispatch, SetStateAction } from 'react'
 import type { Todo } from "../components/types"
 import { getChangeDate } from "../utils/dateUtils"
 import { getTodosByDate } from "../utils/filterUtils"

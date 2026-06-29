@@ -1,5 +1,4 @@
 import { useState } from "react"
-import type { Dispatch, SetStateAction } from 'react'
 import type { Category, Color } from "../components/types"
 import { createCategory, keepTextCategory, keepColorCategory, deleteCategory} from "../api/categoryApi"
 

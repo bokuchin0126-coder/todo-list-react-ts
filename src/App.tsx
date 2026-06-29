@@ -52,7 +52,7 @@ function App() {
     handleDeleteCategory
   } = categoryState
 
-  const localStrage = useInitializeApp(setTodos, setCategories, filter)
+  useInitializeApp(setTodos, setCategories, filter)
 
   const filteredTodos = currentTodos.filter(todo => {
     const matchFilter = filter === "all" || todo.status === filter
