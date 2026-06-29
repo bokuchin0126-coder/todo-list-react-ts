@@ -1,7 +1,6 @@
 import { useState } from "react"
 import type { Dispatch, SetStateAction } from 'react'
 import type { Todo } from "../components/types"
-import { supabase } from "../lib/supabase"
 import { getChangeDate } from "../utils/dateUtils"
 import { getTodosByDate } from "../utils/filterUtils"
 import {
@@ -13,7 +12,7 @@ import {
   updateCatoryId
 } from "../api/todoApi"
 
-function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
+function useTodo() {
 
     const [todos, setTodos] = useState<Todo[]>([])
     const [searchText, setSearchText] = useState<string>("")
@@ -37,7 +36,6 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
 
     const handleAddTodo = async (text: string, memo: string, categoryId: number) => {
     try {
-      setLoading(true)
       if (text.trim() === "") throw new Error("タスク名を入力してください")
       const data = await createTodo(text, memo, categoryId, selectedDate)
 
@@ -62,27 +60,20 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
       } else {
         alert("予期せぬエラーが発生しました")
       }
-
-    } finally {
-      setLoading(false)
     }
   }
 
   const handleDeleteTodo = async (id: number) => {
-    setLoading(true)
     try {
       await deleteTodo(id) 
      
       setTodos(prev => prev.filter(todo => todo.id !== id))
     } catch (e) {
       alert("予期せぬエラーが発生しました")
-    } finally {
-      setLoading(false)
     }
   }
 
   const handleToggleTodo = async (id: number) => {
-    setLoading(true)
     const target = currentTodos.find(todo => todo.id === id)
     if (!target) return 
 
@@ -100,9 +91,7 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
       )))
     } catch (e) {
       alert("予期せぬエラーが発生しました")
-    } finally {
-      setLoading(false)
-    }
+    } 
   }
   
     const handleEditTodo = (id: number) => {
@@ -116,7 +105,6 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
       if (!target) return
 
       try {
-        setLoading(true)
         const data = await updateTodoText(id, newText)
 
         setTodos(prev => prev.map(todo => (
@@ -128,9 +116,7 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
         )))
       } catch {
         alert("予期せぬエラーが発生しました")
-      } finally {
-        setLoading(false)
-      }
+      } 
     }
 
     const handleUpdateMemoTodo = async (id: number, memo: string) => {
@@ -138,7 +124,6 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
       if (!target) return
 
       try {
-        setLoading(true)
         const data = await updateTodoMemo(id, memo)
 
         setTodos(prev => prev.map(todo => (
@@ -150,9 +135,7 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
         )))
       } catch {
         alert("予期せぬエラーが発生しました")
-      } finally {
-        setLoading(false)
-      }
+      } 
     }
 
     const handleUpdateCategoryTodo = async (id: number, categoryId: number) => {
@@ -160,7 +143,6 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
       if (!target) return
 
       try {
-        setLoading(true)
         const data = await updateCatoryId(id, categoryId)
 
         setTodos(prev => prev.map(todo => (
@@ -172,9 +154,7 @@ function useTodo(setLoading: Dispatch<SetStateAction<boolean>>) {
         )))
       } catch {
         alert("予期せぬエラーが発生しました")
-      } finally {
-        setLoading(false)
-      }
+      } 
     }
   
     return {

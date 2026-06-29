@@ -1,10 +1,9 @@
 import { useState } from "react"
 import type { Dispatch, SetStateAction } from 'react'
-import type { Todo, Category, Color } from "../components/types"
-import { supabase } from "../lib/supabase"
+import type { Category, Color } from "../components/types"
 import { createCategory, keepTextCategory, keepColorCategory, deleteCategory} from "../api/categoryApi"
 
-function useCategory(setLoading: Dispatch<SetStateAction<boolean>>) {
+function useCategory() {
 
     
     const [categories, setCategories] = useState<Category[]>([])
@@ -14,7 +13,6 @@ function useCategory(setLoading: Dispatch<SetStateAction<boolean>>) {
       if (categoryName.trim() === "") return 
       
       try {
-        setLoading(true)
         const data = await createCategory(categoryName, color)
 
         setCategories(prev => [...prev, {
@@ -27,14 +25,11 @@ function useCategory(setLoading: Dispatch<SetStateAction<boolean>>) {
         setCategoryName("")
       } catch {
         alert("カテゴリーの追加に失敗しました")
-      } finally {
-        setLoading(false)
-      }
+      } 
     } 
 
     const handleKeepTextCategory = async (id: number, text: string) => {
       try {
-        setLoading(true)
         await keepTextCategory(id, text)
 
         setCategories(prev => prev.map(category => (
@@ -43,9 +38,7 @@ function useCategory(setLoading: Dispatch<SetStateAction<boolean>>) {
 
       } catch {
         alert("保存に失敗しました")
-      } finally {
-        setLoading(false)
-      }
+      } 
     }
    
     const handleEditCategory = (id: number) => {
@@ -64,7 +57,6 @@ function useCategory(setLoading: Dispatch<SetStateAction<boolean>>) {
 
     const handleKeepColorCategory = async (id: number, color: Color) => {
       try {
-        setLoading(true)
         await keepColorCategory(id, color)
 
         setCategories(prev => prev.map(category => (
@@ -72,22 +64,17 @@ function useCategory(setLoading: Dispatch<SetStateAction<boolean>>) {
         )))
       } catch {
         alert("編集に失敗しました")
-      } finally {
-        setLoading(false)
-      }
+      } 
     }
 
     const handleDeleteCategory = async (id: number) => {
       try {
-        setLoading(true)
         await deleteCategory(id)
 
         setCategories(prev => prev.filter(category => category.id !== id))
       } catch {
         alert("削除に失敗しました")
-      } finally {
-        setLoading(false)
-      }
+      } 
     }
 
 

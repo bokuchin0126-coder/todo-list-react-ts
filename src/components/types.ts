@@ -9,7 +9,7 @@ export type Todo = {
     updatedAt: string
     todoDate: string
 }
-
+ 
 export const CATEGORY_COLORS = [
     "red",
     "orange",

@@ -1,19 +1,17 @@
 import { useEffect } from "react"
 import type { Dispatch, SetStateAction } from 'react'
-import { supabase } from "../lib/supabase"
 import type { Todo, Filter, Category } from "../components/types"
 import { fetchTodos } from "../api/todoApi"
 import { fetchCategory } from "../api/categoryApi"
 
 
 function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, setCategories: Dispatch<SetStateAction<Category[]>>,
-  filter: Filter, setLoading: Dispatch<SetStateAction<boolean>>){
+  filter: Filter){
  
    
     useEffect(() => {
       const fetch = async () => {
         try {
-          setLoading(true)
           const data = await fetchTodos()
           setTodos(data.map(todo => ({
             id: todo.id,
@@ -29,9 +27,7 @@ function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, setCategor
 
         } catch {
           alert("データの取得に失敗しました")
-        } finally {
-          setLoading(false)
-        }
+        } 
       }
       fetch()
     }, [])
@@ -39,7 +35,6 @@ function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, setCategor
     useEffect(() => {
       const fetch = async () => {
         try {
-          setLoading(true)
           const data = await fetchCategory()
 
           setCategories(data.map(category => ({
@@ -50,9 +45,7 @@ function useInitializeApp(setTodos: Dispatch<SetStateAction<Todo[]>>, setCategor
           })))
         } catch {
           alert("データの取得に失敗しました")
-        } finally {
-          setLoading(false)
-        }
+        } 
       }
       fetch()
     }, [])

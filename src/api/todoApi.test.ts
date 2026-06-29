@@ -1,5 +1,4 @@
 import { describe, test, expect, beforeEach, vi } from "vitest"
-import type { Todo } from "../components/types"
 import {
     createTodo,
     deleteTodo,

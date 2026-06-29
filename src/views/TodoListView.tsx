@@ -21,7 +21,7 @@ function TodoListView({ filteredTodos, searchText, filter, setSearchText,
     const todoContext = useContext(TodoContext)
     if (!todoContext) return null
 
-    const { todos, selectedDate } = todoContext
+    const { selectedDate } = todoContext
 
 
   return (

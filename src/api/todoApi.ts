@@ -1,4 +1,3 @@
-import type { Todo } from "../components/types"
 import { supabase } from "../lib/supabase"
 
 

@@ -1,5 +1,4 @@
 import { Link, useNavigate, useParams } from "react-router-dom" 
-import type { Category } from "../components/types"
 import { TodoContext } from "../context/TodoContext"
 import { useContext, useState, useEffect } from "react"
 import "../css/todo-detail.css" 

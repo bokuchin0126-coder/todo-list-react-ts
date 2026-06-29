@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react'
-import { supabase } from "./lib/supabase"
+import { useState } from 'react'
 import { Routes, Route, Navigate } from "react-router-dom" 
 import  TodoListView  from './views/TodoListView'
 import  TodoDetailView  from './views/TodoDetailView'
@@ -19,10 +18,9 @@ function App() {
     const saved = localStorage.getItem("filter")
     return (saved as Filter) || "all"
   })
-  const [loading, setLoading] = useState<boolean>(false)
 
 
-  const todoState = useTodo(setLoading)
+  const todoState = useTodo()
   const {
     todos,
     selectedDate,
@@ -41,7 +39,7 @@ function App() {
     changeDate
   } = todoState
 
-  const categoryState = useCategory(setLoading)
+  const categoryState = useCategory()
   const {
     categories,
     setCategories,
@@ -54,7 +52,7 @@ function App() {
     handleDeleteCategory
   } = categoryState
 
-  const localStrage = useInitializeApp(setTodos, setCategories, filter, setLoading)
+  const localStrage = useInitializeApp(setTodos, setCategories, filter)
 
   const filteredTodos = currentTodos.filter(todo => {
     const matchFilter = filter === "all" || todo.status === filter

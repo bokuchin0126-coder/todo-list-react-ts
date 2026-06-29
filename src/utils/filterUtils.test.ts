@@ -25,10 +25,12 @@ const createTodo = (
     id: 1,
     text: "Test Todo",
     status: "active",
+    memo: "",
     todoDate: today,
     isEditing: false,
     categoryId: 1,
     createdAt: "",
+    updatedAt: "",
     ...overrides
 })
 

@@ -1,6 +1,6 @@
 import type { Todo } from "./types"
-import { Link, useNavigate } from "react-router-dom" 
-import { useState, useEffect, useRef, useContext } from "react"
+import { Link } from "react-router-dom" 
+import { useEffect, useRef, useContext } from "react"
 import { TodoContext } from "../context/TodoContext"
 import "../css/todo-item.css"
 
@@ -15,11 +15,9 @@ function TodoItem({ todo, searchText }: Props) {
   const todoContext = useContext(TodoContext)
   if (!todoContext) return null
   
-  const { categories, handleDeleteTodo, handleToggleTodo, handleUpdateTextTodo, handleEditTodo } = todoContext
+  const { categories, handleDeleteTodo, handleToggleTodo, handleEditTodo } = todoContext
 
-  const [tempText, setTempText] = useState<string>(todo.text)
   const divRef = useRef<HTMLDivElement>(null)
-  const navigate = useNavigate()
 
   const category = categories.find(category => category.id === todo.categoryId)
 
@@ -34,7 +32,6 @@ function TodoItem({ todo, searchText }: Props) {
 
     const handleClickOutside = (e: MouseEvent) => {
         if (divRef.current && !divRef.current.contains(e.target as Node)) {
-          setTempText(todo.text)
           handleEditTodo(todo.id)
         }
     }
