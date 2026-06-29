@@ -3,6 +3,7 @@
 React + TypeScriptで作成したTodo管理アプリです。
 
 ## デモ
+[アプリを開く](https://todo-list-react-ts-xehy.vercel.app)
 
 ## スクリーンショット
 
